@@ -1,6 +1,7 @@
 package io.transpect.calabash.extensions.subversion;
 
 import java.io.File;
+import java.io.IOException;
 
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNURL;
@@ -83,14 +84,16 @@ public class XSvnConnect {
      * 
      * @see org.tmatesoft.svn.core.SVNURL
      */
-    public SVNURL getSVNURL() throws SVNException{
+    public SVNURL getSVNURL() throws SVNException {
         SVNURL svnurl = null;
 	if(isURLBool(url)){
 	    svnurl = SVNURL.parseURIEncoded(url);
-	} else {
-	    File path = new File(url);
 	}
 	return svnurl;
+    }
+    public String getPath() throws IOException {
+        File path = new File(url);
+        return path.getCanonicalPath();
     }
     private SVNClientManager init(String username, String password) throws SVNException{
 	//Set up connection protocols support:
