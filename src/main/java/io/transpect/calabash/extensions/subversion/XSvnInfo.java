@@ -10,12 +10,10 @@ import net.sf.saxon.s9api.XdmNode;
 
 import com.xmlcalabash.core.XMLCalabash;
 import com.xmlcalabash.core.XProcRuntime;
-import com.xmlcalabash.core.XProcConstants;
 import com.xmlcalabash.io.WritablePipe;
 import com.xmlcalabash.library.DefaultStep;
 import com.xmlcalabash.model.RuntimeValue;
 import com.xmlcalabash.runtime.XAtomicStep;
-import com.xmlcalabash.util.TreeWriter;
 
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
@@ -23,6 +21,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNInfo;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
+import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
 /**
  * This class provides the svn info command as 
  * XML Calabash extension step for XProc. The class 
@@ -51,7 +50,8 @@ public class XSvnInfo extends DefaultStep {
 
 	String url = getOption(new QName("href")).getString();
         String username = getOption(new QName("username")).getString();
-        String password = getOption(new QName("password")).getString();	
+        String password = getOption(new QName("password")).getString();
+        XSvnXmlReport report = new XSvnXmlReport();
 	try{
 	    XSvnConnect connection = new XSvnConnect(url, username, password);
 	    SVNWCClient client = connection.getClientManager().getWCClient();
@@ -62,11 +62,12 @@ public class XSvnInfo extends DefaultStep {
                 info = client.doInfo(new File(url), SVNRevision.HEAD);
             }
             HashMap<String, String> results = getSVNInfo(info);
-	    XdmNode XmlResult = createXMLResult(results, runtime);
-	    result.write(XmlResult);
+	    XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+	    result.write(xmlResult);
 	}catch(SVNException svne){
 	    System.out.println(svne.getMessage());
-	    result.write(createXMLError(svne.getMessage(), runtime));
+            XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+	    result.write(xmlError);
 	}
     }
     /**
@@ -83,38 +84,5 @@ public class XSvnInfo extends DefaultStep {
 	results.put("root-url", info.getRepositoryRootURL().toString());
 	results.put("nodekind", info.getKind().toString());
 	return results;
-    }
-    /**
-     * Render the HashMap as XML c:param-set
-     */
-    private XdmNode createXMLResult(HashMap<String, String> results, XProcRuntime runtime){
-        TreeWriter tree = new TreeWriter(runtime);
-        tree.startDocument(step.getNode().getBaseURI());
-        tree.addStartElement(XProcConstants.c_param_set);
-	for(String key:results.keySet()) {
-	    tree.addStartElement(XProcConstants.c_param);
-	    tree.addAttribute(new QName("name"), key);	    
-	    tree.addAttribute(new QName("value"), results.get(key));
-	    tree.addEndElement();
-	}
-	tree.addEndElement();
-        tree.endDocument();
-        return tree.getResult();        
-    }
-    /**
-     * Render errors as XML c:errors
-     */
-    private XdmNode createXMLError(String message, XProcRuntime runtime){
-        TreeWriter tree = new TreeWriter(runtime);
-        tree.startDocument(step.getNode().getBaseURI());
-        tree.addStartElement(XProcConstants.c_errors);
-        tree.addAttribute(new QName("code"), "svn-error");
-        tree.addStartElement(XProcConstants.c_error);
-        tree.addAttribute(new QName("code"), "error");
-        tree.addText(message);
-        tree.addEndElement();
-        tree.addEndElement();
-        tree.endDocument();
-        return tree.getResult();        
     }
 }
