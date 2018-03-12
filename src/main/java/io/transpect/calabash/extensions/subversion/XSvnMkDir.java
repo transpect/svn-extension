@@ -65,7 +65,11 @@ public class XSvnMkDir extends DefaultStep {
         String dir = getOption(new QName("dir")).getString();
         Boolean parents = getOption(new QName("parents")).getString() == "yes" ? true : false;
         String commitMessage = getOption(new QName("message")).getString();
-        XSvnXmlReport report = new XSvnXmlReport();        
+        XSvnXmlReport report = new XSvnXmlReport();
+        Boolean force = false;
+        Boolean addAndMkdir = true;
+        Boolean climbUnversionedParents = false;
+        Boolean includeIgnored = false;
 	try{
 	    XSvnConnect connection = new XSvnConnect(url, username, password);
             SVNClientManager clientmngr = connection.getClientManager();
@@ -80,7 +84,7 @@ public class XSvnMkDir extends DefaultStep {
                     commitClient.doMkDir(svnurl, commitMessage);
                 } else {
                     File path = new File( url + "/" + currentDir );
-                    client.doAdd(path, false, true, true, SVNDepth.IMMEDIATES, false, parents);
+                    client.doAdd(path, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
                 }
             }
             XdmNode xmlResult = report.createXmlResult(baseURI, "dir", dirs, runtime, step);
