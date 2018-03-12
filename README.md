@@ -82,7 +82,7 @@ On success, this report is generated:
 Add files to a working copy just like `svn add`.
 
 ```xml
-<svn:add name="svn-delete">
+<svn:add name="svn-add">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="repo"     select="'path-to-local-working-copy'"/>
