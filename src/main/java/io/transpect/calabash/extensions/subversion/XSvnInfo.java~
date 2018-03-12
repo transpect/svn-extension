@@ -48,7 +48,7 @@ public class XSvnInfo extends DefaultStep {
     public void run() throws SaxonApiException {
         super.run();
 
-	String url = getOption(new QName("repo")).getString();
+	String url = getOption(new QName("href")).getString();
         String username = getOption(new QName("username")).getString();
         String password = getOption(new QName("password")).getString();
         XSvnXmlReport report = new XSvnXmlReport();

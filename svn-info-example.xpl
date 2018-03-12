@@ -9,7 +9,7 @@
   <p:option name="username" select="'user'"/>
   <p:option name="password" select="'pass'"/>
 
-  <p:option name="href" select="'https://subversion.le-tex.de/common'"/>
+  <p:option name="repo" select="'https://subversion.le-tex.de/common'"/>
   
   <p:output port="result" sequence="true"/>
 
@@ -18,7 +18,7 @@
   <svn:info name="svn-info">
     <p:with-option name="username" select="$username"/>
     <p:with-option name="password" select="$password"/>
-    <p:with-option name="href"     select="$href"/>
+    <p:with-option name="repo"     select="$repo"/>
   </svn:info>
 
 </p:declare-step>

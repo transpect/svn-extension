@@ -8,7 +8,7 @@
     <p:documentation>Create a directory in a SVN repository</p:documentation>
   </p:output>
 
-  <p:option name="href">
+  <p:option name="repo">
     <p:documentation>
     Path to a working copy or URL to a repository, e.g.
     https://subversion.le-tex.de/common/mydir
