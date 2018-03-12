@@ -18,7 +18,7 @@
 
   <p:import href="svn-add-declaration.xpl"/>
 
-  <svn:add name="svn-delete">
+  <svn:add name="svn-add">
     <p:with-option name="username" select="$username"/>
     <p:with-option name="password" select="$password"/>
     <p:with-option name="repo"     select="$repo"/>
