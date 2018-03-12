@@ -1,5 +1,5 @@
 # svn-extension
-XML Calabash extensions steps to implement Subversion with [SVNKit](https://svnkit.com).
+XML Calabash extension steps to implement Subversion with [SVNKit](https://svnkit.com) as XProc steps.
 
 ## svn:info
 
@@ -68,7 +68,7 @@ option expects a whitespace-separated list of arguments.
 </svn:delete>
 ```
 
-On success, this report is generated:
+This report is generated on success:
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
