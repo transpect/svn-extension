@@ -23,7 +23,7 @@ This is the expected output:
   <c:param name="author" value="mkraetke"/>
   <c:param name="root-url" value="https://subversion.le-tex.de/common"/>
   <c:param name="uuid" value="d851d441-0421-4803-b127-45cb279a3ef2"/>
-  <c:param name="nodekind" value="mkdir"/>
+  <c:param name="nodekind" value="dir"/>
   <c:param name="url" value="https://subversion.le-tex.de/common"/>
 </c:param-set>
 ```
@@ -48,7 +48,7 @@ This leads to this output:
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
              xml:base="https://subversion.le-tex.de/common">
-  <c:param name="dir" value="my-new-dir"/>
+  <c:param name="mkdir" value="my-new-dir"/>
 </c:param-set>
 ```
 
