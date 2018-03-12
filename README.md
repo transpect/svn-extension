@@ -1,5 +1,5 @@
 # svn-extension
-XML Calabash extensions steps to implement Subversion
+XML Calabash extensions steps to implement Subversion with [SVNKIT](https://svnkit.com).
 
 ## svn:info
 
