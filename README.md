@@ -9,7 +9,7 @@ Provides general information about a repository as `c:param-set`.
 <svn:info name="svn-info" xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
-  <p:with-option name="href"     select="'https://subversion.le-tex.de/common/'"/>
+  <p:with-option name="repo"     select="'https://subversion.le-tex.de/common/'"/>
 </svn:info>
 ```
 
@@ -37,7 +37,7 @@ The `dir` option expects a single path or a whitespace-separated list of paths.
 <svn:mkdir name="svn-mkdir">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'parents'"/>
-  <p:with-option name="href"     select="'https://subversion.le-tex.de/common'"/>
+  <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
   <p:with-option name="dir"      select="'my-new-dir'"/>
   <p:with-option name="parents"  select="'yes'"/>
   <p:with-option name="message"  select="'my commit message'"/>
