@@ -1,12 +1,6 @@
 package io.transpect.calabash.extensions.subversion;
 
-import java.util.HashMap;
-
 import java.io.File;
-
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import java.io.IOException;
 
 import net.sf.saxon.s9api.QName;
