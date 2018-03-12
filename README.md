@@ -95,7 +95,7 @@ A sample output of `svn:add` is shown below:
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
-             xml:base="file://home/Martin/path-to-local-working-copy">
+             xml:base="file:/home/Martin/path-to-local-working-copy">
   <c:param name="add" value="MyFile.txt"/>
 </c:param-set>
 ```

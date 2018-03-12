@@ -78,7 +78,7 @@ public class XSvnMkDir extends DefaultStep {
                     client.doAdd(path, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
                 }
             }
-            XdmNode xmlResult = report.createXmlResult(baseURI, "dir", dirs, runtime, step);
+            XdmNode xmlResult = report.createXmlResult(baseURI, "mkdir", dirs, runtime, step);
             result.write(xmlResult);
 	} catch(SVNException|IOException svne) {
 	    System.out.println(svne.getMessage());
