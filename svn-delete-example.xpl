@@ -8,16 +8,10 @@
 
   <p:option name="username" select="'user'"/>
   <p:option name="password" select="'pass'"/>
-
   <p:option name="repo"     select="'https://subversion.le-tex.de/common/'"/>
-
   <p:option name="path" select="'MyDir'"/>
-
-  <p:option name="force" select="'no'"/>
-  
+  <p:option name="force" select="'no'"/>  
   <p:option name="message" select="'my commit message'"/>
-  
-  <p:serialization port="result" indent="true"/>
 
   <p:output port="result" sequence="true"/>
 
