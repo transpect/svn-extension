@@ -26,7 +26,7 @@
       <p:documentation>Whitespace-separated list of
       directory paths to be created.</p:documentation>
   </p:option>
-  <p:option name="parents" select="'yes'">
+  <p:option name="parents" select="'no'">
     <p:documentation>Whether to create parent directories if necessary.
     Applicable values are 'yes' or 'no' (default).</p:documentation>
   </p:option>
