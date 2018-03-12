@@ -25,10 +25,9 @@ import org.tmatesoft.svn.core.wc.SVNWCClient;
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
 /**
- * This class provides the svn mkdir command as 
- * XML Calabash extension step for XProc. The class 
- * connects to a Subversion repository and creates 
- * one or multiple directories
+ * This class provides the svn add command as 
+ * XML Calabash extension step for XProc. The class  
+ * adds one or multiple files in a SVN working copy
  *
  * @see XSvnAdd
  */
