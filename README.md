@@ -1,5 +1,5 @@
 # svn-extension
-XML Calabash extension steps to implement Subversion with [SVNKit](https://svnkit.com) as XProc steps.
+XML Calabash extensions to implement Subversion with [SVNKit](https://svnkit.com) as XProc steps.
 
 ## svn:info
 
