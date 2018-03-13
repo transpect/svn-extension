@@ -118,7 +118,7 @@ This is the expected output.
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
-             xml:base="C:\cygwin64\home\path-to-be-commited">
+             xml:base="file:/home/path-to-be-commited">
    <c:param name="commit" value="path-to-be-commited"/>
 </c:param-set>
 ```
