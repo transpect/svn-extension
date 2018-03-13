@@ -109,7 +109,7 @@ in a SVN working copy.
 <svn:commit name="svn-commit">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
-  <p:with-option name="path"      select="'path-to-be-commited'"/>
+  <p:with-option name="path"     select="'path-to-be-commited'"/>
   <p:with-option name="message"  select="'my commit message'"/>
 </svn:commit>
 ```
