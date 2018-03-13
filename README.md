@@ -99,3 +99,26 @@ A sample output of `svn:add` is shown below:
   <c:param name="add" value="MyFile.txt"/>
 </c:param-set>
 ```
+
+## svn:commit
+
+Commits one or more (whitespace-separated) paths and their children
+in a SVN working copy.
+
+```xml
+<svn:commit name="svn-commit">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="path"      select="'path-to-be-commited'"/>
+  <p:with-option name="message"  select="'my commit message'"/>
+</svn:commit>
+```
+
+This is the expected output.
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
+             xml:base="C:\cygwin64\home\path-to-be-commited">
+   <c:param name="commit" value="path-to-be-commited"/>
+</c:param-set>
+```
