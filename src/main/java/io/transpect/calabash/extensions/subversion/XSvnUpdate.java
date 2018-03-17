@@ -2,6 +2,7 @@ package io.transpect.calabash.extensions.subversion;
 
 import java.io.File;
 import java.io.IOException;
+import java.util.HashMap;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -70,11 +71,11 @@ public class XSvnUpdate extends DefaultStep {
                 filePaths[i] = new File(paths[i]);
             }
             long[] updatedRevision = updateClient.doUpdate(filePaths, svnRevision, SVNDepth.INFINITY, allowUnversionedObstructions, depthIsSticky);
-            String[] revisions = new String[updatedRevision.length];
+            HashMap<String, String> results = new HashMap<String, String>();
             for(int i = 0; i < updatedRevision.length; i++) {
-                revisions[i] = String.valueOf(updatedRevision[i]);
+                results.put(paths[i], String.valueOf(updatedRevision[i]));
             }
-            XdmNode xmlResult = report.createXmlResult(baseURI, "revision", revisions, runtime, step);
+            XdmNode xmlResult = report.createXmlResult(results, runtime, step);
             result.write(xmlResult);
 	} catch(SVNException|IOException svne) {
 	    System.out.println(svne.getMessage());
