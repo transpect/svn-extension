@@ -5,7 +5,7 @@
   type="svn:update">
 
   <p:output port="result" sequence="true">
-    <p:documentation>Create a directory in a SVN repository</p:documentation>
+    <p:documentation>Performs a svn update on a whitespace-separated list of paths.</p:documentation>
   </p:output>
   
   <p:option name="username">
@@ -15,11 +15,10 @@
     <p:documentation>The password for authentification.</p:documentation>
   </p:option>
   <p:option name="path">
-    <p:documentation>Whitespace-separated list of
-    paths to be updated. The paths must reside in a SVN working copy.</p:documentation>
+    <p:documentation>Whitespace-separated list of paths to be updated.</p:documentation>
   </p:option>
   <p:option name="revision" required="false">
-    <p:documentation>Number of a SVN revision.</p:documentation>
+    <p:documentation>SVN revision.</p:documentation>
   </p:option>
   
 </p:declare-step>
