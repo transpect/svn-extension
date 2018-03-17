@@ -6,7 +6,7 @@ XML Calabash extensions to implement Subversion with [SVNKit](https://svnkit.com
 Provides general information about a repository as `c:param-set`.
 
 ```xml
-<svn:info name="svn-info" xmlns:svn="http://transpect.io/svn">
+<svn:info xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="repo"     select="'https://subversion.le-tex.de/common/'"/>
@@ -34,7 +34,7 @@ Creates a directory in a remote repository or working copy like `svn mkdir`.
 The `dir` option expects a single path or a whitespace-separated list of paths.
 
 ```xml
-<svn:mkdir name="svn-mkdir">
+<svn:mkdir xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'parents'"/>
   <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
@@ -58,7 +58,7 @@ Deletes one or multiple paths in a working directory or remote repository. The `
 option expects a whitespace-separated list of arguments.
 
 ```xml
-<svn:delete name="svn-delete">
+<svn:delete xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
@@ -82,7 +82,7 @@ This report is generated on success:
 Add files to a working copy just like `svn add`.
 
 ```xml
-<svn:add name="svn-add">
+<svn:add xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="repo"     select="'path-to-local-working-copy'"/>
@@ -108,7 +108,7 @@ not committed (I'm currently not sure if it would be needed to expose
 the SVN depth as option).
 
 ```xml
-<svn:commit name="svn-commit">
+<svn:commit xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="path"     select="'path-to-be-commited'"/>
@@ -130,7 +130,7 @@ This is the expected output.
 Performs a `svn update` on a whitespace-separated list of paths.
 
 ```xml
-<svn:update name="svn-update">
+<svn:update xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="path"     select="'path1 path2'"/>
