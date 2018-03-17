@@ -5,7 +5,8 @@
   type="svn:commit">
 
   <p:output port="result" sequence="true">
-    <p:documentation>Create a directory in a SVN repository</p:documentation>
+    <p:documentation>Commits one or more paths in a SVN working copy
+    to their respective SVN remote repository</p:documentation>
   </p:output>
   
   <p:option name="username">
