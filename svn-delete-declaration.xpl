@@ -5,7 +5,8 @@
   type="svn:delete">
 
   <p:output port="result" sequence="true">
-    <p:documentation>Create a directory in a SVN repository</p:documentation>
+    <p:documentation>Select one or multiple paths
+    in a SVN repository for deletion.</p:documentation>
   </p:output>
 
   <p:option name="repo">

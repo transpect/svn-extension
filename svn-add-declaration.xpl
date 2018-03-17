@@ -5,7 +5,7 @@
   type="svn:add">
 
   <p:output port="result" sequence="true">
-    <p:documentation>Create a directory in a SVN repository</p:documentation>
+    <p:documentation>Adds one or more paths in a working copy like svn add.</p:documentation>
   </p:output>
 
   <p:option name="repo">
