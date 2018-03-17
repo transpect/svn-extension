@@ -103,7 +103,9 @@ A sample output of `svn:add` is shown below:
 ## svn:commit
 
 Commits one or more (whitespace-separated) paths and their children
-in a SVN working copy.
+in a SVN working copy. Please note that modified SVN properties are
+not committed (I'm currently not sure if it would be needed to expose
+the SVN depth as option).
 
 ```xml
 <svn:commit name="svn-commit">
@@ -120,5 +122,27 @@ This is the expected output.
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
              xml:base="file:/home/path-to-be-commited">
    <c:param name="commit" value="path-to-be-commited"/>
+</c:param-set>
+```
+
+## svn:update
+
+Performs a `svn update` on a whitespace-separated list of paths.
+
+```xml
+<svn:update name="svn-update">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="path"     select="'path1 path2'"/>
+  <p:with-option name="revision" select="'HEAD'"/>
+</svn:update>
+```
+
+Information about the updated revisions are exposed as `c:param-set`.
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+   <c:param name="path1" value="27"/>
+   <c:param name="path2" value="152"/>
 </c:param-set>
 ```
