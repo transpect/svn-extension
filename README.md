@@ -142,7 +142,32 @@ Information about the updated revisions are exposed as `c:param-set`.
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
-   <c:param name="path1" value="27"/>
-   <c:param name="path2" value="152"/>
+  <c:param name="path1" value="27"/>
+  <c:param name="path2" value="152"/>
+</c:param-set>
+```
+
+## svn:checkout
+
+Checkout a working copy of a SVN repository.
+
+```xml
+<svn:checkout xmlns:svn="http://transpect.io/svn">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="path"     select="'checkout-path'"/>
+  <p:with-option name="repo"     select="'https://subversion.le-tex.de/myrepo'"/>
+  <p:with-option name="revision" select="'HEAD'"/>
+</svn:checkout>
+```
+
+Output
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+  <c:param name="path" value="checkout-path"/>
+  <c:param name="repo"
+           value="https://subversion.le-tex.de/myrepo"/>
+  <c:param name="revision" value="6634"/>
 </c:param-set>
 ```
