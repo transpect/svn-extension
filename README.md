@@ -43,7 +43,7 @@ The `dir` option expects a single path or a whitespace-separated list of paths.
   <p:with-option name="message"  select="'my commit message'"/>
 </svn:mkdir>
 ```
-This leads to this output:
+This results in this output:
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step"
