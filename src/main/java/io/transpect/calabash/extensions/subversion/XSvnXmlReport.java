@@ -63,29 +63,6 @@ public class XSvnXmlReport {
     return tree.getResult();
   }
   /**
-   * Render a SVNDirEntry ArrayList as XML (c:files)
-   */
-  public XdmNode createXmlResult(String baseURI, ArrayList<SVNDirEntry> results, XProcRuntime runtime, XAtomicStep step){
-    TreeWriter tree = new TreeWriter(runtime);
-    tree.startDocument(step.getNode().getBaseURI());
-    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"));
-    tree.addAttribute(new QName("xml", "http://www.w3.org/XML/1998/namespace", "base"), baseURI);
-    for(int i = 0; i < results.size(); i++){
-      String type = results.get(i).getKind().toString() == "dir" ? "directory" : "file";
-      tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", type));
-      tree.addAttribute(new QName("name"), results.get(i).getName());
-      tree.addAttribute(new QName("author"), results.get(i).getAuthor());
-      tree.addAttribute(new QName("date"), results.get(i).getDate().toString());
-      tree.addAttribute(new QName("revision"), String.valueOf(results.get(i).getRevision()));
-      tree.addAttribute(new QName("size"), String.valueOf(results.get(i).getSize()));
-      tree.addAttribute(new QName("msg"), results.get(i).getCommitMessage());
-      tree.addEndElement();
-    }
-    tree.addEndElement();
-    tree.endDocument();
-    return tree.getResult();
-  }
-  /**
    * Render errors as XML c:errors
    */
   public XdmNode createXmlError(String message, XProcRuntime runtime, XAtomicStep step){
