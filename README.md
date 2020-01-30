@@ -134,7 +134,7 @@ When the `recursive` option is set to yes, subdirectories are recursively listed
 <svn:list xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username"  select="'user'"/>
   <p:with-option name="password"  select="'pass'"/>
-  <p:with-option name="repo"      select="'https://subversion.le-tex.de/common'"/>
+  <p:with-option name="repo"      select="'https://subversion.le-tex.de/repo'"/>
   <p:with-option name="recursive" select="'yes'"/>
 </svn:list>
 ```
@@ -142,7 +142,7 @@ When the `recursive` option is set to yes, subdirectories are recursively listed
 Output:
 ```xml
 <c:files xmlns:c="http://www.w3.org/ns/xproc-step"
-         xml:base="https://subversion.le-tex.de/common/repo">
+         xml:base="https://subversion.le-tex.de/repo">
   <c:file name="myfile.xml" author="mkraetke" date="Sat Feb 14 12:11:22 CET 2015"
           revision="3181" size="846"/>
   <c:directory name="mydir" author="mkraetke" date="Wed Feb 25 18:58:31 CET 2015" 
