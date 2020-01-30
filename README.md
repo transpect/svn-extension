@@ -36,7 +36,7 @@ The `dir` option expects a single path or a whitespace-separated list of paths.
 ```xml
 <svn:mkdir xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
-  <p:with-option name="password" select="'parents'"/>
+  <p:with-option name="password" select="'pass'"/>
   <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
   <p:with-option name="dir"      select="'my-new-dir'"/>
   <p:with-option name="parents"  select="'yes'"/>
@@ -124,6 +124,32 @@ This is the expected output.
    <c:param name="commit" value="path-to-be-commited"/>
 </c:param-set>
 ```
+
+## svn:list
+
+List contents of a remote SVN repository or local working copy.
+When the `recursive` option is set to yes, subdirectories are recursively listed.
+
+```xml
+<svn:commit xmlns:svn="http://transpect.io/svn">
+  <p:with-option name="username"  select="'user'"/>
+  <p:with-option name="password"  select="'pass'"/>
+  <p:with-option name="repo"      select="'https://subversion.le-tex.de/common'"/>
+  <p:with-option name="recursive" select="'yes'"/>
+</svn:commit>
+```
+
+Output:
+```xml
+<c:files xmlns:c="http://www.w3.org/ns/xproc-step"
+         xml:base="https://subversion.le-tex.de/common/pdf2fxl">
+  <c:file name="myfile.xml" author="mkraetke" date="Sat Feb 14 12:11:22 CET 2015"
+          revision="3181" size="846"/>
+  <c:directory name="mydir" author="mkraetke" date="Wed Feb 25 18:58:31 CET 2015" 
+               revision="3219" size="0"/>
+</c:files>
+```
+
 
 ## svn:update
 
