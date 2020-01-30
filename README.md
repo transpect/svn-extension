@@ -131,12 +131,12 @@ List contents of a remote SVN repository or local working copy.
 When the `recursive` option is set to yes, subdirectories are recursively listed.
 
 ```xml
-<svn:commit xmlns:svn="http://transpect.io/svn">
+<svn:list xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username"  select="'user'"/>
   <p:with-option name="password"  select="'pass'"/>
   <p:with-option name="repo"      select="'https://subversion.le-tex.de/common'"/>
   <p:with-option name="recursive" select="'yes'"/>
-</svn:commit>
+</svn:list>
 ```
 
 Output:
