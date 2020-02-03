@@ -30,7 +30,7 @@ public class XSvnXmlReport {
   /**
    * Render a HashMap as XML (c:param-set)
    */
-  public XdmNode createXmlResult(HashMap<String, String> results, XProcRuntime runtime, XAtomicStep step){
+  public static XdmNode createXmlResult(HashMap<String, String> results, XProcRuntime runtime, XAtomicStep step){
     TreeWriter tree = new TreeWriter(runtime);
     tree.startDocument(step.getNode().getBaseURI());
     tree.addStartElement(XProcConstants.c_param_set);
@@ -47,7 +47,7 @@ public class XSvnXmlReport {
   /**
    * Render a String array as XML (c:param-set)
    */
-  public XdmNode createXmlResult(String baseURI, String type, String[] results, XProcRuntime runtime, XAtomicStep step){
+  public static XdmNode createXmlResult(String baseURI, String type, String[] results, XProcRuntime runtime, XAtomicStep step){
     TreeWriter tree = new TreeWriter(runtime);
     tree.startDocument(step.getNode().getBaseURI());
     tree.addStartElement(XProcConstants.c_param_set);
@@ -65,7 +65,7 @@ public class XSvnXmlReport {
   /**
    * Render errors as XML c:errors
    */
-  public XdmNode createXmlError(String message, XProcRuntime runtime, XAtomicStep step){
+  public static XdmNode createXmlError(String message, XProcRuntime runtime, XAtomicStep step){
     TreeWriter tree = new TreeWriter(runtime);
     tree.startDocument(step.getNode().getBaseURI());
     tree.addStartElement(XProcConstants.c_errors);
