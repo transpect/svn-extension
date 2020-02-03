@@ -31,56 +31,56 @@ import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
  *
  */
 public class XSvnUpdate extends DefaultStep {
-    private WritablePipe result = null;
+  private WritablePipe result = null;
     
-    public XSvnUpdate(XProcRuntime runtime, XAtomicStep step) {
-        super(runtime,step);
+  public XSvnUpdate(XProcRuntime runtime, XAtomicStep step) {
+    super(runtime,step);
+  }
+  @Override
+  public void setOutput(String port, WritablePipe pipe) {
+    result = pipe;
+  }
+  @Override
+  public void reset() {
+    result.resetWriter();
+  }
+  @Override
+  public void run() throws SaxonApiException {
+    super.run();
+    String username = getOption(new QName("username")).getString();
+    String password = getOption(new QName("password")).getString();
+    String path = getOption(new QName("path")).getString();
+    String revision = getOption(new QName("revision")).getString();
+    XSvnXmlReport report = new XSvnXmlReport();
+    try{
+      String[] paths = path.split(" ");
+      File[] filePaths = new File[paths.length];
+      XSvnConnect connection = new XSvnConnect(paths[0], username, password);
+      SVNClientManager clientmngr = connection.getClientManager();
+      SVNUpdateClient updateClient = clientmngr.getUpdateClient();
+      String baseURI = connection.isRemote() ? paths[0] : connection.getPath();
+      SVNRevision svnRevision;
+      boolean allowUnversionedObstructions = true;
+      boolean depthIsSticky = true;;
+      if(revision.trim().isEmpty()){
+        svnRevision = SVNRevision.HEAD;                
+      } else {
+        svnRevision = SVNRevision.parse(revision);
+      }            
+      for(int i = 0; i < paths.length; i++) {
+        filePaths[i] = new File(paths[i]);
+      }
+      long[] updatedRevision = updateClient.doUpdate(filePaths, svnRevision, SVNDepth.INFINITY, allowUnversionedObstructions, depthIsSticky);
+      HashMap<String, String> results = new HashMap<String, String>();
+      for(int i = 0; i < updatedRevision.length; i++) {
+        results.put(paths[i], String.valueOf(updatedRevision[i]));
+      }
+      XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+      result.write(xmlResult);
+    } catch(SVNException|IOException svne) {
+      System.out.println(svne.getMessage());
+      XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+      result.write(xmlError);
     }
-    @Override
-    public void setOutput(String port, WritablePipe pipe) {
-        result = pipe;
-    }
-    @Override
-    public void reset() {
-        result.resetWriter();
-    }
-    @Override
-    public void run() throws SaxonApiException {
-        super.run();
-        String username = getOption(new QName("username")).getString();
-        String password = getOption(new QName("password")).getString();
-        String path = getOption(new QName("path")).getString();
-        String revision = getOption(new QName("revision")).getString();
-        XSvnXmlReport report = new XSvnXmlReport();
-	try{
-            String[] paths = path.split(" ");
-            File[] filePaths = new File[paths.length];
-	    XSvnConnect connection = new XSvnConnect(paths[0], username, password);
-            SVNClientManager clientmngr = connection.getClientManager();
-            SVNUpdateClient updateClient = clientmngr.getUpdateClient();
-            String baseURI = connection.isRemote() ? paths[0] : connection.getPath();
-            SVNRevision svnRevision;
-            boolean allowUnversionedObstructions = true;
-            boolean depthIsSticky = true;;
-            if(revision.trim().isEmpty()){
-                svnRevision = SVNRevision.HEAD;                
-            } else {
-                svnRevision = SVNRevision.parse(revision);
-            }            
-            for(int i = 0; i < paths.length; i++) {
-                filePaths[i] = new File(paths[i]);
-            }
-            long[] updatedRevision = updateClient.doUpdate(filePaths, svnRevision, SVNDepth.INFINITY, allowUnversionedObstructions, depthIsSticky);
-            HashMap<String, String> results = new HashMap<String, String>();
-            for(int i = 0; i < updatedRevision.length; i++) {
-                results.put(paths[i], String.valueOf(updatedRevision[i]));
-            }
-            XdmNode xmlResult = report.createXmlResult(results, runtime, step);
-            result.write(xmlResult);
-	} catch(SVNException|IOException svne) {
-	    System.out.println(svne.getMessage());
-            XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
-	    result.write(xmlError);
-	}
-    }
+  }
 }

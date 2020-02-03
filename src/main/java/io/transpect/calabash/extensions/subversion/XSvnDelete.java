@@ -34,53 +34,53 @@ import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
  * @see XSvnDelete
  */
 public class XSvnDelete extends DefaultStep {
-    private WritablePipe result = null;
+  private WritablePipe result = null;
     
-    public XSvnDelete(XProcRuntime runtime, XAtomicStep step) {
-        super(runtime,step);
+  public XSvnDelete(XProcRuntime runtime, XAtomicStep step) {
+    super(runtime,step);
+  }
+  @Override
+  public void setOutput(String port, WritablePipe pipe) {
+    result = pipe;
+  }
+  @Override
+  public void reset() {
+    result.resetWriter();
+  }
+  @Override
+  public void run() throws SaxonApiException {
+    super.run();
+    String url = getOption(new QName("repo")).getString();
+    String username = getOption(new QName("username")).getString();
+    String password = getOption(new QName("password")).getString();
+    String path = getOption(new QName("path")).getString();
+    Boolean force = getOption(new QName("force")).getString() == "yes" ? true : false;        
+    String commitMessage = getOption(new QName("message")).getString();
+    Boolean dryRun = false;
+    XSvnXmlReport report = new XSvnXmlReport(); 
+    try{
+      XSvnConnect connection = new XSvnConnect(url, username, password);
+      SVNClientManager clientmngr = connection.getClientManager();
+      String baseURI = connection.isRemote() ? url : connection.getPath();
+      SVNCommitClient commitClient = clientmngr.getCommitClient();
+      SVNWCClient client = clientmngr.getWCClient();
+      String[] paths = path.split(" ");
+      for(int i = 0; i < paths.length; i++) {
+        String currentPath = paths[i];
+        if( connection.isRemote() ){
+          SVNURL[] svnurl = { SVNURL.parseURIEncoded( url + "/" + currentPath )};
+          commitClient.doDelete(svnurl, commitMessage);
+        } else {
+          File fullPath = new File( url + "/" + currentPath );
+          client.doDelete(fullPath, force, dryRun);
+        }
+      }
+      XdmNode xmlResult = report.createXmlResult(baseURI, "delete", paths, runtime, step);
+      result.write(xmlResult);
+    } catch(SVNException|IOException svne) {
+      System.out.println(svne.getMessage());
+      XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+      result.write(xmlError);
     }
-    @Override
-    public void setOutput(String port, WritablePipe pipe) {
-        result = pipe;
-    }
-    @Override
-    public void reset() {
-        result.resetWriter();
-    }
-    @Override
-    public void run() throws SaxonApiException {
-        super.run();
-	String url = getOption(new QName("repo")).getString();
-        String username = getOption(new QName("username")).getString();
-        String password = getOption(new QName("password")).getString();
-        String path = getOption(new QName("path")).getString();
-        Boolean force = getOption(new QName("force")).getString() == "yes" ? true : false;        
-        String commitMessage = getOption(new QName("message")).getString();
-        Boolean dryRun = false;
-        XSvnXmlReport report = new XSvnXmlReport(); 
-	try{
-	    XSvnConnect connection = new XSvnConnect(url, username, password);
-            SVNClientManager clientmngr = connection.getClientManager();
-            String baseURI = connection.isRemote() ? url : connection.getPath();
-            SVNCommitClient commitClient = clientmngr.getCommitClient();
-            SVNWCClient client = clientmngr.getWCClient();
-            String[] paths = path.split(" ");
-            for(int i = 0; i < paths.length; i++) {
-                String currentPath = paths[i];
-                if( connection.isRemote() ){
-                    SVNURL[] svnurl = { SVNURL.parseURIEncoded( url + "/" + currentPath )};
-                    commitClient.doDelete(svnurl, commitMessage);
-                } else {
-                    File fullPath = new File( url + "/" + currentPath );
-                    client.doDelete(fullPath, force, dryRun);
-                }
-            }
-            XdmNode xmlResult = report.createXmlResult(baseURI, "delete", paths, runtime, step);
-            result.write(xmlResult);
-	} catch(SVNException|IOException svne) {
-	    System.out.println(svne.getMessage());
-            XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
-	    result.write(xmlError);
-	}
-    }
+  }
 }

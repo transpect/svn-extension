@@ -32,38 +32,38 @@ import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
  * @see XSvnConnect
  */
 public class XSvnList extends DefaultStep {
-    private WritablePipe result = null;
+  private WritablePipe result = null;
 
-    public XSvnList(XProcRuntime runtime, XAtomicStep step) {
-        super(runtime,step);
+  public XSvnList(XProcRuntime runtime, XAtomicStep step) {
+    super(runtime,step);
+  }
+  @Override
+  public void setOutput(String port, WritablePipe pipe) {
+    result = pipe;
+  }
+  @Override
+  public void reset() {
+    result.resetWriter();
+  }
+  @Override
+  public void run() throws SaxonApiException {
+    super.run();
+    String url = getOption(new QName("repo")).getString();
+    String username = getOption(new QName("username")).getString();
+    String password = getOption(new QName("password")).getString();
+    Boolean recursive = getOption(new QName("recursive")).getString() == "yes" ? true : false;
+    XSvnXmlReport report = new XSvnXmlReport();
+    try{
+      XSvnConnect connection = new XSvnConnect(url, username, password);
+      SVNRepository repository = connection.getRepository();
+      XdmNode xmlResult = createXmlDirTree(repository, "", runtime, step, recursive);
+      result.write(xmlResult);
+    }catch(SVNException svne){
+      System.out.println(svne.getMessage());
+      XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+      result.write(xmlError);
     }
-    @Override
-    public void setOutput(String port, WritablePipe pipe) {
-        result = pipe;
-    }
-    @Override
-    public void reset() {
-        result.resetWriter();
-    }
-    @Override
-    public void run() throws SaxonApiException {
-        super.run();
-	String url = getOption(new QName("repo")).getString();
-        String username = getOption(new QName("username")).getString();
-        String password = getOption(new QName("password")).getString();
-        Boolean recursive = getOption(new QName("recursive")).getString() == "yes" ? true : false;
-        XSvnXmlReport report = new XSvnXmlReport();
-	try{
-          XSvnConnect connection = new XSvnConnect(url, username, password);
-          SVNRepository repository = connection.getRepository();
-          XdmNode xmlResult = createXmlDirTree(repository, "", runtime, step, recursive);
-          result.write(xmlResult);
-	}catch(SVNException svne){
-	    System.out.println(svne.getMessage());
-            XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
-	    result.write(xmlError);
-	}
-    }
+  }
 
   public static XdmNode createXmlDirTree(SVNRepository repository, String path, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
     TreeWriter tree = new TreeWriter(runtime);

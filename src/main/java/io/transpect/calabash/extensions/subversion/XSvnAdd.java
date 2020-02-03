@@ -31,49 +31,49 @@ import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
  * @see XSvnAdd
  */
 public class XSvnAdd extends DefaultStep {
-    private WritablePipe result = null;
+  private WritablePipe result = null;
     
-    public XSvnAdd(XProcRuntime runtime, XAtomicStep step) {
-        super(runtime,step);
-    }
-    @Override
-    public void setOutput(String port, WritablePipe pipe) {
-        result = pipe;
-    }
-    @Override
-    public void reset() {
-        result.resetWriter();
-    }
-    @Override
-    public void run() throws SaxonApiException {
-        super.run();
-	String url = getOption(new QName("repo")).getString();
-        String username = getOption(new QName("username")).getString();
-        String password = getOption(new QName("password")).getString();
-        String path = getOption(new QName("path")).getString();
-        Boolean parents = getOption(new QName("parents")).getString() == "yes" ? true : false;
+  public XSvnAdd(XProcRuntime runtime, XAtomicStep step) {
+    super(runtime,step);
+  }
+  @Override
+  public void setOutput(String port, WritablePipe pipe) {
+    result = pipe;
+  }
+  @Override
+  public void reset() {
+    result.resetWriter();
+  }
+  @Override
+  public void run() throws SaxonApiException {
+    super.run();
+    String url = getOption(new QName("repo")).getString();
+    String username = getOption(new QName("username")).getString();
+    String password = getOption(new QName("password")).getString();
+    String path = getOption(new QName("path")).getString();
+    Boolean parents = getOption(new QName("parents")).getString() == "yes" ? true : false;
 
-        XSvnXmlReport report = new XSvnXmlReport();
-        Boolean force = false;
-        Boolean addAndMkdir = false;
-        Boolean climbUnversionedParents = false;
-        Boolean includeIgnored = false;
-	try{
-	    XSvnConnect connection = new XSvnConnect(url, username, password);
-            SVNClientManager clientmngr = connection.getClientManager();
-            String baseURI = connection.isRemote() ? url : connection.getPath();
-            SVNWCClient client = clientmngr.getWCClient();
-            String[] paths = path.split(" ");
-            for(int i = 0; i < paths.length; i++) {
-                File currentPath = new File( url + "/" + paths[i]);
-                client.doAdd(currentPath, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
-            }
-            XdmNode xmlResult = report.createXmlResult(baseURI, "add", paths, runtime, step);
-            result.write(xmlResult);
-	} catch(SVNException|IOException svne) {
-	    System.out.println(svne.getMessage());
-            XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
-	    result.write(xmlError);
-	}
+    XSvnXmlReport report = new XSvnXmlReport();
+    Boolean force = false;
+    Boolean addAndMkdir = false;
+    Boolean climbUnversionedParents = false;
+    Boolean includeIgnored = false;
+    try{
+      XSvnConnect connection = new XSvnConnect(url, username, password);
+      SVNClientManager clientmngr = connection.getClientManager();
+      String baseURI = connection.isRemote() ? url : connection.getPath();
+      SVNWCClient client = clientmngr.getWCClient();
+      String[] paths = path.split(" ");
+      for(int i = 0; i < paths.length; i++) {
+        File currentPath = new File( url + "/" + paths[i]);
+        client.doAdd(currentPath, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
+      }
+      XdmNode xmlResult = report.createXmlResult(baseURI, "add", paths, runtime, step);
+      result.write(xmlResult);
+    } catch(SVNException|IOException svne) {
+      System.out.println(svne.getMessage());
+      XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+      result.write(xmlError);
     }
+  }
 }
