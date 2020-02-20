@@ -60,7 +60,7 @@ public class XSvnConnect {
    *
    * @see org.tmatesoft.svn.core.io.SVNRepository
    */
-  public SVNRepository getRepository() throws SVNException, IOException {
+  public SVNRepository getRepository() throws SVNException {
     repository = clientManager.createRepository(getSVNURL(), false);
     return repository;
   }
