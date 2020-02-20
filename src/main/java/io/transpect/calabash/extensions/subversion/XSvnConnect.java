@@ -13,7 +13,6 @@ import org.tmatesoft.svn.core.internal.io.fs.FSRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.dav.DAVRepositoryFactory;
 import org.tmatesoft.svn.core.internal.io.svn.SVNRepositoryFactoryImpl;
 import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
-
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNInfo;
@@ -51,7 +50,7 @@ public class XSvnConnect {
    *
    * @see org.tmatesoft.svn.core.wc.SVNClientManager
    */
-  public SVNClientManager getClientManager() throws SVNException{
+  public SVNClientManager getClientManager() throws SVNException {
     return clientManager;
   }
   /**
@@ -61,7 +60,7 @@ public class XSvnConnect {
    *
    * @see org.tmatesoft.svn.core.io.SVNRepository
    */
-  public SVNRepository getRepository() throws SVNException{
+  public SVNRepository getRepository() throws SVNException, IOException {
     repository = clientManager.createRepository(getSVNURL(), false);
     return repository;
   }
@@ -85,6 +84,13 @@ public class XSvnConnect {
     SVNURL svnurl = null;
     if(isURLBool(url)){
       svnurl = SVNURL.parseURIEncoded(url);
+    } else {
+      try {
+        File path = new File(url);
+        svnurl = SVNURL.fromFile(new File(path.getCanonicalPath()));
+      } catch ( IOException e) {
+        System.out.println(e.getMessage());
+      }
     }
     return svnurl;
   }
