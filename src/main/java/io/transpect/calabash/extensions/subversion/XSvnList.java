@@ -4,6 +4,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import java.io.File;
+import java.io.IOException;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -21,6 +22,8 @@ import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.io.SVNRepository;
+import org.tmatesoft.svn.core.wc.SVNClientManager;
+import org.tmatesoft.svn.core.wc.SVNWCClient;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
@@ -53,19 +56,55 @@ public class XSvnList extends DefaultStep {
     String password = getOption(new QName("password")).getString();
     Boolean recursive = getOption(new QName("recursive")).getString() == "yes" ? true : false;
     XSvnXmlReport report = new XSvnXmlReport();
+    XdmNode xmlResult;
     try{
       XSvnConnect connection = new XSvnConnect(url, username, password);
-      SVNRepository repository = connection.getRepository();
-      XdmNode xmlResult = createXmlDirTree(repository, "", runtime, step, recursive);
-      result.write(xmlResult);
-    }catch(SVNException svne){
-      System.out.println(svne.getMessage());
-      XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
+      if(connection.isRemote()){
+        SVNRepository repository = connection.getRepository();
+        xmlResult = createXmlDirTree(repository, runtime, step, recursive);
+        result.write(xmlResult);
+      } else {
+        File path = new File(new File(url).getCanonicalPath());
+        SVNClientManager clientmngr = connection.getClientManager();
+        SVNWCClient client = clientmngr.getWCClient();
+        xmlResult = createXmlDirTree(path, client, runtime, step, recursive);
+        result.write(xmlResult);
+      }
+    }catch(SVNException | IOException e){
+      System.out.println(e.getMessage());
+      XdmNode xmlError = report.createXmlError(e.getMessage(), runtime, step);
       result.write(xmlError);
     }
   }
-
-  public static XdmNode createXmlDirTree(SVNRepository repository, String path, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
+  public static XdmNode createXmlDirTree(File path, SVNWCClient client, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
+    TreeWriter tree = new TreeWriter(runtime);
+    tree.startDocument(step.getNode().getBaseURI());
+    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"));
+    tree.addAttribute(new QName("xml", "http://www.w3.org/XML/1998/namespace", "base"), path.toURI().toString());
+    listEntries(path, client, runtime, step, tree, recursive);
+    tree.addEndElement();
+    tree.endDocument();
+    return tree.getResult();
+  }
+  public static TreeWriter listEntries(File path, SVNWCClient client, XProcRuntime runtime, XAtomicStep step, TreeWriter tree, Boolean recursive) throws SVNException {
+    File[] dirList = path.listFiles();
+    if( path.isDirectory() && dirList != null ) {
+      for (File child : dirList ) {
+        String elementName = child.isDirectory() ? "directory" : "file";
+        tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName));
+        tree.addAttribute(new QName("name"), child.getName());
+        if(!child.isDirectory()) {
+          tree.addAttribute(new QName("size"), String.valueOf(child.length() / 1024));
+        }
+        if(child.isDirectory() && recursive) {
+          listEntries(child, client, runtime, step, tree, recursive);
+        }
+        tree.addEndElement();
+      }
+    }
+    return tree;
+  }
+  public static XdmNode createXmlDirTree(SVNRepository repository, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
     TreeWriter tree = new TreeWriter(runtime);
     tree.startDocument(step.getNode().getBaseURI());
     tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"));
@@ -74,8 +113,7 @@ public class XSvnList extends DefaultStep {
     tree.addEndElement();
     tree.endDocument();
     return tree.getResult();
-  }
-  
+  }  
   public static TreeWriter listEntries(SVNRepository repository, String path, XProcRuntime runtime, XAtomicStep step, TreeWriter tree, Boolean recursive) throws SVNException {
     Collection entries = repository.getDir( path, -1 , null , (Collection) null );
     Iterator iterator = entries.iterator( );
