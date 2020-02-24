@@ -129,12 +129,12 @@ public class XSvnList extends DefaultStep {
       tree.addAttribute(new QName("author"), entry.getAuthor());
       tree.addAttribute(new QName("date"), entry.getDate().toString());
       tree.addAttribute(new QName("revision"), String.valueOf(entry.getRevision()));
-      tree.addAttribute(new QName("size"), String.valueOf(entry.getSize()));
       if( entry.getKind() == SVNNodeKind.FILE ){
         SVNLock lock = repository.getLock( entryRelPath );
+        tree.addAttribute(new QName("size"), String.valueOf(entry.getSize()));      
         if( lock != null ) {
           tree.addAttribute(new QName("lock-id"), lock.getID());
-          tree.addAttribute(new QName("lock-id"), lock.getPath());
+          tree.addAttribute(new QName("lock-path"), lock.getPath());
           tree.addAttribute(new QName("lock-owner"), lock.getOwner());
           tree.addAttribute(new QName("lock-created"), lock.getCreationDate().toString());
           if( lock.getExpirationDate() != null ) {
