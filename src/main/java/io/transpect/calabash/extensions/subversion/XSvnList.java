@@ -18,6 +18,7 @@ import com.xmlcalabash.model.RuntimeValue;
 import com.xmlcalabash.runtime.XAtomicStep;
 import com.xmlcalabash.util.TreeWriter;
 
+import org.tmatesoft.svn.core.SVNLock;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.SVNDirEntry;
 import org.tmatesoft.svn.core.SVNException;
@@ -117,15 +118,33 @@ public class XSvnList extends DefaultStep {
   public static TreeWriter listEntries(SVNRepository repository, String path, XProcRuntime runtime, XAtomicStep step, TreeWriter tree, Boolean recursive) throws SVNException {
     Collection entries = repository.getDir( path, -1 , null , (Collection) null );
     Iterator iterator = entries.iterator( );
+    String repositoryRootURL = repository.getRepositoryRoot(true).toString();
     while ( iterator.hasNext( ) ) {
       SVNDirEntry entry = (SVNDirEntry) iterator.next( );
       String elementName = entry.getKind() == SVNNodeKind.DIR ? "directory" : "file";
+      String entryURL = entry.getURL().toString();
+      String entryRelPath = entryURL.replace(repositoryRootURL, "");
       tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName));
       tree.addAttribute(new QName("name"), entry.getName());
       tree.addAttribute(new QName("author"), entry.getAuthor());
       tree.addAttribute(new QName("date"), entry.getDate().toString());
       tree.addAttribute(new QName("revision"), String.valueOf(entry.getRevision()));
       tree.addAttribute(new QName("size"), String.valueOf(entry.getSize()));
+      if( entry.getKind() == SVNNodeKind.FILE ){
+        SVNLock lock = repository.getLock( entryRelPath );
+        if( lock != null ) {
+          tree.addAttribute(new QName("lock-id"), lock.getID());
+          tree.addAttribute(new QName("lock-id"), lock.getPath());
+          tree.addAttribute(new QName("lock-owner"), lock.getOwner());
+          tree.addAttribute(new QName("lock-created"), lock.getCreationDate().toString());
+          if( lock.getExpirationDate() != null ) {
+            tree.addAttribute(new QName("lock-expires"), lock.getExpirationDate().toString());
+          }
+          if( lock.getComment() != null ) {
+            tree.addAttribute(new QName("lock-comment"), lock.getComment());
+          }
+        }
+      }
       if ( entry.getKind() == SVNNodeKind.DIR && recursive == true ) {
         listEntries(repository, (path.equals( "" )) ? entry.getName( ) : path + "/" + entry.getName( ), runtime, step, tree, recursive);
       }
