@@ -8,14 +8,6 @@
     <p:documentation>Create a directory in a SVN repository</p:documentation>
   </p:output>
 
-  <p:option name="repo">
-    <p:documentation>
-    Path to a working copy or URL to a repository, e.g.
-    https://subversion.le-tex.de/common/mydir
-    C:/cygwin64/home/Martin/transpect/mydir
-    ../transpect/mydir
-    </p:documentation>
-  </p:option>
   <p:option name="username">
     <p:documentation>The username for authentification.</p:documentation>
   </p:option>

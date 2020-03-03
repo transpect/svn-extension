@@ -57,10 +57,11 @@ public class XSvnAdd extends DefaultStep {
     Boolean addAndMkdir = false;
     Boolean climbUnversionedParents = false;
     Boolean includeIgnored = false;
+    String repo = path.split(" ")[0];
     try{
-      XSvnConnect connection = new XSvnConnect(path, username, password);
+      XSvnConnect connection = new XSvnConnect(repo, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
-      String baseURI = connection.isRemote() ? path : connection.getPath();
+      String baseURI = connection.isRemote() ? repo : connection.getPath();
       SVNWCClient client = clientmngr.getWCClient();
       String[] paths = path.split(" ");
       for(int i = 0; i < paths.length; i++) {

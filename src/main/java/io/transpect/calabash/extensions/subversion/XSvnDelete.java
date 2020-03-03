@@ -56,11 +56,12 @@ public class XSvnDelete extends DefaultStep {
     Boolean force = getOption(new QName("force")).getString() == "yes" ? true : false;        
     String commitMessage = getOption(new QName("message")).getString();
     Boolean dryRun = false;
-    XSvnXmlReport report = new XSvnXmlReport(); 
+    XSvnXmlReport report = new XSvnXmlReport();
+    String repo = url.split(" ")[0];
     try{
-      XSvnConnect connection = new XSvnConnect(url, username, password);
+      XSvnConnect connection = new XSvnConnect(repo, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
-      String baseURI = connection.isRemote() ? url : connection.getPath();
+      String baseURI = connection.isRemote() ? repo : connection.getPath();
       SVNCommitClient commitClient = clientmngr.getCommitClient();
       SVNWCClient client = clientmngr.getWCClient();
       String[] urls = url.split(" ");

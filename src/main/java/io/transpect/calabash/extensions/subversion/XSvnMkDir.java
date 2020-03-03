@@ -50,7 +50,6 @@ public class XSvnMkDir extends DefaultStep {
   @Override
   public void run() throws SaxonApiException {
     super.run();
-    String url = getOption(new QName("repo")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
     String dir = getOption(new QName("dir")).getString();
@@ -61,6 +60,7 @@ public class XSvnMkDir extends DefaultStep {
     Boolean addAndMkdir = true;
     Boolean climbUnversionedParents = false;
     Boolean includeIgnored = false;
+    String url = dir.split(" ")[0];
     try{
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
@@ -71,10 +71,10 @@ public class XSvnMkDir extends DefaultStep {
       for(int i = 0; i < dirs.length; i++) {
         String currentDir = dirs[i];
         if( connection.isRemote() ){
-          SVNURL[] svnurl = { SVNURL.parseURIEncoded( url + "/" + currentDir )};
+          SVNURL[] svnurl = { SVNURL.parseURIEncoded( currentDir )};
           commitClient.doMkDir(svnurl, commitMessage);
         } else {
-          File path = new File( url + "/" + currentDir );
+          File path = new File( currentDir );
           client.doAdd(path, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
         }
       }
