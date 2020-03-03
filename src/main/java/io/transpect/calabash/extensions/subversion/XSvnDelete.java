@@ -50,7 +50,6 @@ public class XSvnDelete extends DefaultStep {
   @Override
   public void run() throws SaxonApiException {
     super.run();
-    System.out.println("-------------jiru");
     String url = getOption(new QName("url")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
