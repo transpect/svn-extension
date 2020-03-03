@@ -8,13 +8,6 @@
     <p:documentation>Adds one or more paths in a working copy like svn add.</p:documentation>
   </p:output>
 
-  <p:option name="repo">
-    <p:documentation>
-    Path to a working copy e.g.
-    C:/cygwin64/home/Martin/transpect/mydir
-    ../transpect/mydir
-    </p:documentation>
-  </p:option>
   <p:option name="username">
     <p:documentation>The username for authentification.</p:documentation>
   </p:option>

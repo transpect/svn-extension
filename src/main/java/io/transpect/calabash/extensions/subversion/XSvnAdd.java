@@ -47,7 +47,6 @@ public class XSvnAdd extends DefaultStep {
   @Override
   public void run() throws SaxonApiException {
     super.run();
-    String url = getOption(new QName("repo")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
     String path = getOption(new QName("path")).getString();
@@ -59,13 +58,13 @@ public class XSvnAdd extends DefaultStep {
     Boolean climbUnversionedParents = false;
     Boolean includeIgnored = false;
     try{
-      XSvnConnect connection = new XSvnConnect(url, username, password);
+      XSvnConnect connection = new XSvnConnect(path, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
-      String baseURI = connection.isRemote() ? url : connection.getPath();
+      String baseURI = connection.isRemote() ? path : connection.getPath();
       SVNWCClient client = clientmngr.getWCClient();
       String[] paths = path.split(" ");
       for(int i = 0; i < paths.length; i++) {
-        File currentPath = new File( url + "/" + paths[i]);
+        File currentPath = new File( paths[i]);
         client.doAdd(currentPath, force, addAndMkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, parents);
       }
       XdmNode xmlResult = report.createXmlResult(baseURI, "add", paths, runtime, step);
