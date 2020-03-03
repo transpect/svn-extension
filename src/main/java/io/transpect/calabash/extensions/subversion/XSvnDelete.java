@@ -50,10 +50,10 @@ public class XSvnDelete extends DefaultStep {
   @Override
   public void run() throws SaxonApiException {
     super.run();
-    String url = getOption(new QName("repo")).getString();
+    System.out.println("-------------jiru");
+    String url = getOption(new QName("url")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
-    String path = getOption(new QName("path")).getString();
     Boolean force = getOption(new QName("force")).getString() == "yes" ? true : false;        
     String commitMessage = getOption(new QName("message")).getString();
     Boolean dryRun = false;
@@ -64,18 +64,18 @@ public class XSvnDelete extends DefaultStep {
       String baseURI = connection.isRemote() ? url : connection.getPath();
       SVNCommitClient commitClient = clientmngr.getCommitClient();
       SVNWCClient client = clientmngr.getWCClient();
-      String[] paths = path.split(" ");
-      for(int i = 0; i < paths.length; i++) {
-        String currentPath = paths[i];
+      String[] urls = url.split(" ");
+      for(int i = 0; i < urls.length; i++) {
+        String currentPath = urls[i];
         if( connection.isRemote() ){
-          SVNURL[] svnurl = { SVNURL.parseURIEncoded( url + "/" + currentPath )};
+          SVNURL[] svnurl = { SVNURL.parseURIEncoded( currentPath )};
           commitClient.doDelete(svnurl, commitMessage);
         } else {
-          File fullPath = new File( url + "/" + currentPath );
+          File fullPath = new File( currentPath );
           client.doDelete(fullPath, force, dryRun);
         }
       }
-      XdmNode xmlResult = report.createXmlResult(baseURI, "delete", paths, runtime, step);
+      XdmNode xmlResult = report.createXmlResult(baseURI, "delete", urls, runtime, step);
       result.write(xmlResult);
     } catch(SVNException|IOException svne) {
       System.out.println(svne.getMessage());

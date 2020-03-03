@@ -9,12 +9,10 @@
     in a SVN repository for deletion.</p:documentation>
   </p:output>
 
-  <p:option name="repo">
+  <p:option name="url">
     <p:documentation>
-    Path to a working copy or URL to a repository, e.g.
-    https://subversion.le-tex.de/common/mydir
-    C:/cygwin64/home/Martin/transpect/mydir
-    ../transpect/mydir
+      Whitespace-separated list of
+      paths or URLs to be deleted.
     </p:documentation>
   </p:option>
   <p:option name="username">
@@ -26,10 +24,6 @@
   <p:option name="force" select="'no'">
     <p:documentation>Force deletion of selected paths.
     Possible values are 'yes' and 'no' (default).</p:documentation>
-  </p:option>
-  <p:option name="path">
-    <p:documentation>Whitespace-separated list of
-    paths to be deleted.</p:documentation>
   </p:option>
   <p:option name="message" select="'svn:delete removed path'">
     <p:documentation>Provide a message for your commit.</p:documentation>

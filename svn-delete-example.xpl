@@ -8,8 +8,7 @@
 
   <p:option name="username" select="'user'"/>
   <p:option name="password" select="'pass'"/>
-  <p:option name="repo"     select="'https://subversion.le-tex.de/common/'"/>
-  <p:option name="path" select="'MyDir'"/>
+  <p:option name="url"     select="'https://subversion.le-tex.de/common/ToBeDeleted'"/>
   <p:option name="force" select="'no'"/>  
   <p:option name="message" select="'my commit message'"/>
 
@@ -20,8 +19,7 @@
   <svn:delete name="svn-delete">
     <p:with-option name="username" select="$username"/>
     <p:with-option name="password" select="$password"/>
-    <p:with-option name="repo"     select="$repo"/>
-    <p:with-option name="path"     select="$path"/>
+    <p:with-option name="url"     select="$url"/>
     <p:with-option name="message"  select="$message"/>
   </svn:delete>
 
