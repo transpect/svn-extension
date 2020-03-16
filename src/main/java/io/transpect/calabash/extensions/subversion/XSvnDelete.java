@@ -53,7 +53,7 @@ public class XSvnDelete extends DefaultStep {
     String url = getOption(new QName("url")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
-    Boolean force = getOption(new QName("force")).getString() == "yes" ? true : false;        
+    Boolean force = getOption(new QName("force")).getString().equals("yes") ? true : false;        
     String commitMessage = getOption(new QName("message")).getString();
     Boolean dryRun = false;
     XSvnXmlReport report = new XSvnXmlReport();

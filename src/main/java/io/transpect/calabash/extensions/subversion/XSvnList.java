@@ -55,7 +55,7 @@ public class XSvnList extends DefaultStep {
     String url = getOption(new QName("repo")).getString();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
-    Boolean recursive = getOption(new QName("recursive")).getString() == "yes" ? true : false;
+    Boolean recursive = getOption(new QName("recursive")).getString().equals("yes") ? true : false;
     XSvnXmlReport report = new XSvnXmlReport();
     XdmNode xmlResult;
     try{
@@ -71,7 +71,7 @@ public class XSvnList extends DefaultStep {
         xmlResult = createXmlDirTree(path, client, runtime, step, recursive);
         result.write(xmlResult);
       }
-    }catch(SVNException | IOException e){
+    } catch (SVNException | IOException e){
       System.out.println(e.getMessage());
       XdmNode xmlError = report.createXmlError(e.getMessage(), runtime, step);
       result.write(xmlError);

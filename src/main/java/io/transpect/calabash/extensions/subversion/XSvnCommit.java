@@ -1,6 +1,6 @@
 package io.transpect.calabash.extensions.subversion;
 
-11;rgb:0000/0000/0000import java.io.File;
+import java.io.File;
 import java.io.IOException;
 
 import net.sf.saxon.s9api.QName;
@@ -20,7 +20,6 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
-import org.tmatesoft.svn.core.wc.SVNCommitClient;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;

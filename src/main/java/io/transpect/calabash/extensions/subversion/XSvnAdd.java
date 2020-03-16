@@ -50,7 +50,7 @@ public class XSvnAdd extends DefaultStep {
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
     String path = getOption(new QName("path")).getString();
-    Boolean parents = getOption(new QName("parents")).getString() == "yes" ? true : false;
+    Boolean parents = getOption(new QName("parents")).getString().equals("yes") ? true : false;
 
     XSvnXmlReport report = new XSvnXmlReport();
     Boolean force = false;
