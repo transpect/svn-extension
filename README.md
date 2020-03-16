@@ -52,6 +52,60 @@ This results in this output:
 </c:param-set>
 ```
 
+## svn:copy
+
+Copies a whitespace-separated list of files
+to another location in a working copy or a remote repository.
+
+```xml
+<svn:copy xmlns:svn="http://transpect.io/svn">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
+  <p:with-option name="path"     select="'path-to/source.xml'"/>
+  <p:with-option name="target"   select="'path-to/target.xml'"/>
+  <p:with-option name="message"  select="'my commit message'"/>
+</svn:copy>
+```
+
+Output:
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+  <c:param name="date" value="Mon Mar 16 21:39:26 CET 2020"/>
+  <c:param name="all" value="r2353 by 'mkraetke' at Mon Mar 16 21:39:26 CET 2020"/>
+  <c:param name="author" value="mkraetke"/>
+  <c:param name="revision" value="2353"/>
+</c:param-set>
+```
+
+## svn:move
+
+Moves a whitespace-separatedlist of filesv to another
+location in a working copy or a remote repository.
+
+```xml
+<svn:move xmlns:svn="http://transpect.io/svn">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="repo"     select="'https://subversion.le-tex.de/common'"/>
+  <p:with-option name="path"     select="'path-to/source.xml'"/>
+  <p:with-option name="target"   select="'path-to/target.xml'"/>
+  <p:with-option name="message"  select="'my commit message'"/>
+</svn:move>
+```
+
+Output:
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+  <c:param name="date" value="Mon Mar 16 21:39:26 CET 2020"/>
+  <c:param name="all" value="r2353 by 'mkraetke' at Mon Mar 16 21:39:26 CET 2020"/>
+  <c:param name="author" value="mkraetke"/>
+  <c:param name="revision" value="2353"/>
+</c:param-set>
+```
+
 ## svn:delete
 
 Deletes one or multiple paths in a working directory or remote repository. The `path`
@@ -149,7 +203,6 @@ Output:
                revision="3219" size="0"/>
 </c:files>
 ```
-
 
 ## svn:update
 
