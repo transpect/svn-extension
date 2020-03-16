@@ -3,6 +3,8 @@ package io.transpect.calabash.extensions.subversion;
 import java.io.File;
 import java.io.IOException;
 
+import java.util.HashMap;
+
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
@@ -69,17 +71,13 @@ public class XSvnCopy extends DefaultStep {
     String target = getOption(new QName("target")).getString();
     Boolean move = getOption(new QName("move")).getString().equals("yes") ? true : false;
     String commitMessage = getOption(new QName("message")).getString();
-    Boolean mkdir = false;    
     Boolean makeParents = true;
-    Boolean failWhenDestExists = false;
-    Boolean force = false;
-    Boolean climbUnversionedParents = false;
-    Boolean includeIgnored = false;
-    Boolean keepLocks = false;
-    Boolean keepChangelist = false;
+    Boolean climbUnversionedParents, failWhenDestExists, force, includeIgnored, keepChangelist, keepLocks, mkdir;
+    climbUnversionedParents = failWhenDestExists = force = includeIgnored = keepChangelist = keepLocks = mkdir = false;
     String[] changelists = null;
     XSvnXmlReport report = new XSvnXmlReport();
     SVNProperties svnProps = new SVNProperties();
+    SVNCommitInfo commit;
     try{
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
@@ -94,19 +92,17 @@ public class XSvnCopy extends DefaultStep {
           sourceURLs[i] = SVNURL.parseURIEncoded( url + "/" + paths[i] );
           sources[i] = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, sourceURLs[i]);
         }
-        SVNCommitInfo commit = copyClient.doCopy(sources, targetURL, move, makeParents, failWhenDestExists, commitMessage, svnProps);
-      } else {        
+        commit = copyClient.doCopy(sources, targetURL, move, makeParents, failWhenDestExists, commitMessage, svnProps);
+      } else {
         SVNWCClient client = clientmngr.getWCClient();
         SVNCommitClient commitClient = clientmngr.getCommitClient();
         SVNStatusClient statusClient = clientmngr.getStatusClient();
         File targetPath = new File( url + "/" + target );
-        File[] commitPaths = new File[paths.length + 1];
-        File[] sourcePaths = new File[paths.length];
-        String[] commitFilenames = new String[commitPaths.length];
+        File[] sourcePaths, commitPaths = new File[paths.length];
         for( int i = 0; i < paths.length; i++ ) {
           File sourcePath = new File(url + "/" + paths[i]);
+          commitPaths[i] = targetPath;
           if( move ) {
-            commitPaths[i+1] = sourcePath;
             Files.move(sourcePath.toPath(), targetPath.toPath(), StandardCopyOption.REPLACE_EXISTING);
             client.doDelete(sourcePath, true, false);
           } else {
@@ -119,16 +115,35 @@ public class XSvnCopy extends DefaultStep {
           if( status !=  null
               && ( status.getContentsStatus() == SVNStatusType.STATUS_MODIFIED
                    || status.getContentsStatus() == SVNStatusType.STATUS_ADDED )){
-            commitClient.doCommit(commitPaths, keepLocks, commitMessage, svnProps, changelists, keepChangelist, force, SVNDepth.IMMEDIATES);
           }
         }
+        commit = commitClient.doCommit(commitPaths, keepLocks, commitMessage, svnProps, changelists, keepChangelist, force, SVNDepth.IMMEDIATES);
       }
-      XdmNode xmlResult = report.createXmlResult(baseURI, "path", paths, runtime, step);
+      HashMap<String, String> results = getSVNCommitInfo(commit);
+      XdmNode xmlResult = report.createXmlResult(results, runtime, step);
       result.write(xmlResult);
     } catch( SVNException | IOException svne ) {
       System.out.println(svne.getMessage());
       XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
       result.write(xmlError);
     }
+  }
+  /**
+   * Create a HashMap from SVNCommitInfo object
+   */
+  private HashMap<String, String> getSVNCommitInfo(SVNCommitInfo commit){
+    HashMap<String, String> results = new HashMap<String, String>();
+    results.put("revision", String.valueOf(commit.getNewRevision()));
+    if(commit.getNewRevision() != -1) {
+      results.put("author", commit.getAuthor());
+      results.put("date", commit.getDate().toString());
+      results.put("all", commit.toString());
+    } else {
+      results.put("all", "nothing new to commit");
+    }
+    if(commit.getErrorMessage() != null) {
+      results.put("error", commit.getErrorMessage().getFullMessage());
+    }
+    return results;
   }
 }
