@@ -5,8 +5,7 @@
   type="svn:copy">
 
   <p:output port="result" sequence="true">
-    <p:documentation>Select one or multiple paths
-    in a SVN repository for deletion.</p:documentation>
+    <p:documentation>The output is the XML representation of the commit.</p:documentation>
   </p:output>
 
   <p:option name="repo">
