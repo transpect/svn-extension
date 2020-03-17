@@ -26,6 +26,9 @@ import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
+import org.tmatesoft.svn.core.SVNCommitInfo;
+import org.tmatesoft.svn.core.SVNNodeKind;
+import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
@@ -33,7 +36,6 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNCopySource;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNCommitClient;
-import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.wc.SVNCopyClient;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 
@@ -72,7 +74,7 @@ public class XSvnCopy extends DefaultStep {
     Boolean move = getOption(new QName("move")).getString().equals("yes") ? true : false;
     String commitMessage = getOption(new QName("message")).getString();
     Boolean makeParents = true;
-    Boolean climbUnversionedParents, failWhenDestExists, force, includeIgnored, keepChangelist, keepLocks, mkdir;
+    Boolean climbUnversionedParents, failWhenDestExists, force, includeIgnored, keepChangelist, keepLocks, mkdir, outIsDir;
     climbUnversionedParents = failWhenDestExists = force = includeIgnored = keepChangelist = keepLocks = mkdir = false;
     String[] changelists = null;
     XSvnXmlReport report = new XSvnXmlReport();
@@ -81,10 +83,13 @@ public class XSvnCopy extends DefaultStep {
     try{
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
+      SVNWCClient client = clientmngr.getWCClient();
       String baseURI = connection.isRemote() ? url : connection.getPath();
       String[] paths = path.split(" ");
-      SVNCopySource[] sources = new SVNCopySource[paths.length];
+      String[] results = new String[paths.length];
+      SVNCopySource[] sources = new SVNCopySource[paths.length];      
       if( connection.isRemote() ){
+        SVNRepository repository = connection.getRepository();
         SVNCopyClient copyClient = clientmngr.getCopyClient();
         SVNURL[] sourceURLs = new SVNURL[paths.length];
         SVNURL targetURL = SVNURL.parseURIEncoded( url + "/" + target );
@@ -93,8 +98,8 @@ public class XSvnCopy extends DefaultStep {
           sources[i] = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, sourceURLs[i]);
         }
         commit = copyClient.doCopy(sources, targetURL, move, makeParents, failWhenDestExists, commitMessage, svnProps);
+        outIsDir = client.doInfo(targetURL, SVNRevision.HEAD, SVNRevision.HEAD).getKind() == SVNNodeKind.DIR;
       } else {
-        SVNWCClient client = clientmngr.getWCClient();
         SVNCommitClient commitClient = clientmngr.getCommitClient();
         SVNStatusClient statusClient = clientmngr.getStatusClient();
         File targetPath = new File( url + "/" + target );
@@ -111,39 +116,24 @@ public class XSvnCopy extends DefaultStep {
           SVNStatus status = statusClient.doStatus(targetPath, true);
           if( status == null ) {
             client.doAdd(targetPath, force, mkdir, climbUnversionedParents, SVNDepth.IMMEDIATES, includeIgnored, makeParents);
-          }
-          if( status !=  null
-              && ( status.getContentsStatus() == SVNStatusType.STATUS_MODIFIED
-                   || status.getContentsStatus() == SVNStatusType.STATUS_ADDED )){
+            results[i] = url + "/" + target;
           }
         }
-        commit = commitClient.doCommit(commitPaths, keepLocks, commitMessage, svnProps, changelists, keepChangelist, force, SVNDepth.IMMEDIATES);
+        outIsDir = targetPath.isDirectory();
       }
-      HashMap<String, String> results = getSVNCommitInfo(commit);
-      XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+      if(outIsDir) {
+        for( int i = 0; i < paths.length; i++ ) {
+          results[i] = url + "/" + target + "/" + paths[i];
+        }
+      } else {
+        results[0] = url + "/" + target;
+      }
+      XdmNode xmlResult = report.createXmlResult(url, "path", results, runtime, step);
       result.write(xmlResult);
     } catch( SVNException | IOException svne ) {
       System.out.println(svne.getMessage());
       XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
       result.write(xmlError);
     }
-  }
-  /**
-   * Create a HashMap from SVNCommitInfo object
-   */
-  private HashMap<String, String> getSVNCommitInfo(SVNCommitInfo commit){
-    HashMap<String, String> results = new HashMap<String, String>();
-    results.put("revision", String.valueOf(commit.getNewRevision()));
-    if(commit.getNewRevision() != -1) {
-      results.put("author", commit.getAuthor());
-      results.put("date", commit.getDate().toString());
-      results.put("all", commit.toString());
-    } else {
-      results.put("all", "nothing new to commit");
-    }
-    if(commit.getErrorMessage() != null) {
-      results.put("error", commit.getErrorMessage().getFullMessage());
-    }
-    return results;
   }
 }
