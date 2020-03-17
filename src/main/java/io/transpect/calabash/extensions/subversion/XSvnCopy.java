@@ -20,7 +20,6 @@ import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
 import org.tmatesoft.svn.core.SVNNodeKind;
-import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
 import org.tmatesoft.svn.core.wc.SVNStatus;
 import org.tmatesoft.svn.core.wc.SVNStatusType;
@@ -80,7 +79,6 @@ public class XSvnCopy extends DefaultStep {
       String[] results = new String[paths.length];
       SVNCopySource[] sources = new SVNCopySource[paths.length];      
       if( connection.isRemote() ){
-        SVNRepository repository = connection.getRepository();
         SVNCopyClient copyClient = clientmngr.getCopyClient();
         SVNURL[] sourceURLs = new SVNURL[paths.length];
         SVNURL targetURL = SVNURL.parseURIEncoded( url + "/" + target );
