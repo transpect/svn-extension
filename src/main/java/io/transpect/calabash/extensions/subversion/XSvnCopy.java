@@ -3,30 +3,22 @@ package io.transpect.calabash.extensions.subversion;
 import java.io.File;
 import java.io.IOException;
 
-import java.util.HashMap;
-
 import java.nio.file.Files;
-import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
 
-import com.xmlcalabash.core.XMLCalabash;
 import com.xmlcalabash.core.XProcRuntime;
-import com.xmlcalabash.core.XProcConstants;
 import com.xmlcalabash.io.WritablePipe;
 import com.xmlcalabash.library.DefaultStep;
-import com.xmlcalabash.model.RuntimeValue;
 import com.xmlcalabash.runtime.XAtomicStep;
-import com.xmlcalabash.util.TreeWriter;
 
 import org.tmatesoft.svn.core.SVNDepth;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.SVNException;
 import org.tmatesoft.svn.core.SVNProperties;
-import org.tmatesoft.svn.core.SVNCommitInfo;
 import org.tmatesoft.svn.core.SVNNodeKind;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.wc.SVNStatusClient;
@@ -79,7 +71,6 @@ public class XSvnCopy extends DefaultStep {
     String[] changelists = null;
     XSvnXmlReport report = new XSvnXmlReport();
     SVNProperties svnProps = new SVNProperties();
-    SVNCommitInfo commit;
     try{
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
@@ -97,7 +88,7 @@ public class XSvnCopy extends DefaultStep {
           sourceURLs[i] = SVNURL.parseURIEncoded( url + "/" + paths[i] );
           sources[i] = new SVNCopySource(SVNRevision.HEAD, SVNRevision.HEAD, sourceURLs[i]);
         }
-        commit = copyClient.doCopy(sources, targetURL, move, makeParents, failWhenDestExists, commitMessage, svnProps);
+        copyClient.doCopy(sources, targetURL, move, makeParents, failWhenDestExists, commitMessage, svnProps);
         outIsDir = client.doInfo(targetURL, SVNRevision.HEAD, SVNRevision.HEAD).getKind() == SVNNodeKind.DIR;
       } else {
         SVNCommitClient commitClient = clientmngr.getCommitClient();
