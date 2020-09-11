@@ -17,7 +17,7 @@
   <p:option name="path">
     <p:documentation>Whitespace-separated list of paths to be updated.</p:documentation>
   </p:option>
-  <p:option name="revision" required="false">
+  <p:option name="revision" required="false" select="'HEAD'">
     <p:documentation>SVN revision.</p:documentation>
   </p:option>
   
