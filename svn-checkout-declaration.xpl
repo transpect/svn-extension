@@ -17,7 +17,7 @@
   <p:option name="repo">
     <p:documentation>URL to a SVN repository</p:documentation>
   </p:option>
-  <p:option name="revision">
+  <p:option name="revision" required="false" select="'HEAD'">
     <p:documentation>SVN revision number</p:documentation>
   </p:option>
   <p:option name="path">
