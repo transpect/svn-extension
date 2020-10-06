@@ -4,6 +4,7 @@ import java.io.File;
 import java.io.IOException;
 
 import org.tmatesoft.svn.core.SVNException;
+import org.tmatesoft.svn.core.SVNErrorMessage;
 import org.tmatesoft.svn.core.SVNURL;
 import org.tmatesoft.svn.core.io.SVNRepository;
 import org.tmatesoft.svn.core.io.SVNRepositoryFactory;
@@ -16,6 +17,9 @@ import org.tmatesoft.svn.core.internal.wc.DefaultSVNOptions;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNInfo;
+import org.tmatesoft.svn.core.internal.wc.DefaultSVNAuthenticationManager;
+import org.tmatesoft.svn.core.auth.ISVNAuthenticationManager;
+import org.tmatesoft.svn.core.auth.SVNAuthentication;
 
 /**
  * This class implements SVNKit and provides methods to connect to a 
@@ -98,20 +102,28 @@ public class XSvnConnect {
     File path = new File(url);
     return path.getCanonicalPath();
   }
-  private SVNClientManager init(String username, String password) throws SVNException{
+ private SVNClientManager init(String username, String password) throws SVNException{
+
     //Set up connection protocols support:
     DAVRepositoryFactory.setup();             // http
     SVNRepositoryFactoryImpl.setup();         // svn, svn+xxx (svn+ssh in particular)
     FSRepositoryFactory.setup();              // file
     DefaultSVNOptions options = SVNWCUtil.createDefaultOptions(true);
-    if(url.startsWith("http://")||url.startsWith("https://")){
-      SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
+	if(username == null || username.isEmpty()){
+	  System.out.println("INFO: username is empty; use svn auth");
+	  ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager();
+	  SVNClientManager clientManager = SVNClientManager.newInstance(options, authManager);
       return clientManager;
-    }else{
-      SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
-      SVNWCClient client = clientManager.getWCClient();
-      return clientManager;
-    }
+	}
+	return null;
+    // if(url.startsWith("http://")||url.startsWith("https://")){
+      // SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
+      // return clientManager;
+    // }else{
+      // SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
+      // SVNWCClient client = clientManager.getWCClient();
+      // return clientManager;
+    // }
   }
   private boolean isURLBool(String href){
     return href.startsWith("http://") || href.startsWith("https://");
