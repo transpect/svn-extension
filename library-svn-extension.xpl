@@ -24,6 +24,7 @@
   <p:import href="svn-mkdir-declaration.xpl"/>
   <p:import href="svn-move-declaration.xpl"/>
   <p:import href="svn-unlock-declaration.xpl"/>
+  <p:import href="svn-propget-declaration.xpl"/>
   <p:import href="svn-update-declaration.xpl"/>
   
 </p:library>
