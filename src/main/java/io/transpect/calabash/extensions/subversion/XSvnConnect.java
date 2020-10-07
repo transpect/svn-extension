@@ -114,16 +114,14 @@ public class XSvnConnect {
 	  ISVNAuthenticationManager authManager = SVNWCUtil.createDefaultAuthenticationManager();
 	  SVNClientManager clientManager = SVNClientManager.newInstance(options, authManager);
       return clientManager;
-	}
-	return null;
-    // if(url.startsWith("http://")||url.startsWith("https://")){
-      // SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
-      // return clientManager;
-    // }else{
-      // SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
-      // SVNWCClient client = clientManager.getWCClient();
-      // return clientManager;
-    // }
+	} else if(url.startsWith("http://")||url.startsWith("https://")){
+      SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
+      return clientManager;
+    }else{
+      SVNClientManager clientManager = SVNClientManager.newInstance(options, username, password);
+      SVNWCClient client = clientManager.getWCClient();
+      return clientManager;
+    }
   }
   private boolean isURLBool(String href){
     return href.startsWith("http://") || href.startsWith("https://");
