@@ -24,6 +24,7 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNPropertyData;
+import org.tmatesoft.svn.core.SVNPropertyValue;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
@@ -75,7 +76,8 @@ public class XSvnPropget extends DefaultStep {
                                                  svnRevision
 												 );
       HashMap<String, String> results = new HashMap<String, String>();
-	  results.put("propdata", propdata.getName());
+	  results.put("propName", propdata.getName());
+	  results.put("propValue", propdata.getValue().toString());
       results.put("repo", svnurl.toString());
       results.put("revision", String.valueOf(revision));
       XdmNode xmlResult = report.createXmlResult(results, runtime, step);
