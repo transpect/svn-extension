@@ -22,6 +22,12 @@
           hub2html -r 12 https://github.com/transpect/hub2html/trunk
         </svn:property>
       </p:inline>
+      <p:inline>
+        <svn:property name="svn:externals2">
+          tei2hub -r 6 https://github.com/transpect/tei2hub/trunk
+          hub2html -r 12 https://github.com/transpect/hub2html/trunk
+        </svn:property>
+      </p:inline>
     </p:input>
     <p:with-option name="username"   select="$username"/><!-- optional -->
     <p:with-option name="password"   select="$password"/><!-- optional -->

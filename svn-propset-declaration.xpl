@@ -3,7 +3,7 @@
   xmlns:svn="http://transpect.io/svn" 
   version="1.0" 
   type="svn:propset">
-  <p:input port="source">
+  <p:input port="source" sequence="true">
     <p:documentation>Expects a list of svn:property elements, containing the properties to set.</p:documentation>
   </p:input>
 

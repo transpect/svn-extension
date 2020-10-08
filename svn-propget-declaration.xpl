@@ -22,7 +22,7 @@
   <p:option name="password">
     <p:documentation>The password for authentification.</p:documentation>
   </p:option>
-  <p:option name="propname">
+  <p:option name="properties">
     <p:documentation>Name of the Property to get.</p:documentation>
   </p:option>
 

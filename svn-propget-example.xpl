@@ -9,17 +9,17 @@
   <p:option name="username" select="''"/>
   <p:option name="password" select="''"/>
   <p:option name="repo" select="'https://subversion.le-tex.de/common/pdf2fxl'"/>
-  <p:option name="propname" select="'propname1'"/>
+  <p:option name="properties" select="'letex:compat svn:externals'"/>
     
   <p:output port="result" sequence="true"/>
 
   <p:import href="svn-propget-declaration.xpl"/>
 
   <svn:propget name="svn-propget">
-    <p:with-option name="username"  select="$username"/>
-    <p:with-option name="password"  select="$password"/>
-    <p:with-option name="repo"      select="$repo"/>
-    <p:with-option name="propname"  select="$propname"/>
+    <p:with-option name="username"   select="$username"/><!-- optional -->
+    <p:with-option name="password"   select="$password"/><!-- optional -->
+    <p:with-option name="repo"       select="$repo"/>    <!-- required -->
+    <p:with-option name="properties" select="$properties"/><!-- whitespace-separated list -->
   </svn:propget>
 
 </p:declare-step>
