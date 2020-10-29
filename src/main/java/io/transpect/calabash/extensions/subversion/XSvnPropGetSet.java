@@ -8,8 +8,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Iterator;
 
-// import net.sf.saxon.om.NodeInfo;
-import net.sf.saxon.om.*;
 
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
@@ -34,7 +32,9 @@ import org.tmatesoft.svn.core.wc.SVNRevision;
 import org.tmatesoft.svn.core.wc.SVNClientManager;
 import org.tmatesoft.svn.core.wc.SVNWCClient;
 import org.tmatesoft.svn.core.wc.SVNPropertyData;
+import org.tmatesoft.svn.core.wc.ISVNPropertyHandler;
 import org.tmatesoft.svn.core.SVNPropertyValue;
+import org.tmatesoft.svn.core.SVNDepth;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
@@ -50,18 +50,95 @@ public class XSvnPropGetSet extends DefaultStep {
   private SVNRevision svnRevision = null;
     
   private HashMap<String, String> PropGet(SVNWCClient propClient, SVNURL url, String[] aProperties) throws SVNException{
-    print("PropGet");
-    List<SVNPropertyData> propData = new ArrayList<SVNPropertyData>();
-    for (String property: aProperties){
-      propData.add(propClient.doGetProperty(url,property,svnPegRevision,svnRevision));
-    }
-      HashMap<String, String> results = new HashMap<String, String>();
-    for (SVNPropertyData data: propData){
-      if (data != null) {
-        results.put(data.getName(), data.getValue().toString());
-      }
-    }
-    return results;
+	    print("PropGet");
+	    List<SVNPropertyData> propData = new ArrayList<SVNPropertyData>();
+	    for (String property: aProperties){
+	      propData.add(propClient.doGetProperty(url,property,svnPegRevision,svnRevision));
+	    }
+	      HashMap<String, String> results = new HashMap<String, String>();
+	    for (SVNPropertyData data: propData){
+	      if (data != null) {
+	        results.put(data.getName(), data.getValue().toString());
+	      }
+	    }
+	    return results;
+	  }
+  
+  private HashMap<String, String> PropGet(SVNWCClient propClient, File svnPath, String[] aProperties) throws SVNException{
+	    print("PropGet");
+	    List<SVNPropertyData> propData = new ArrayList<SVNPropertyData>();
+	    for (String property: aProperties){
+	      propData.add(propClient.doGetProperty(svnPath,property,svnPegRevision,svnRevision));
+	    }
+	      HashMap<String, String> results = new HashMap<String, String>();
+	    for (SVNPropertyData data: propData){
+	      if (data != null) {
+	        results.put(data.getName(), data.getValue().toString());
+	      }
+	    }
+	    return results;
+	  }
+  
+  private ISVNPropertyHandler getCommitHandler(){
+  return ISVNPropertyHandler.NULL;
+  }
+  
+  private HashMap<String, String> PropSet(SVNWCClient propClient, File svnPath) throws SVNException{
+	  print("PropSet");
+	    try {
+	      HashMap<String, String> props = new HashMap<String, String>();
+	      XdmNode sourceNode = null;
+	      
+	      sourceNode = source.read();
+	      while (sourceNode != null){
+	        try {
+	          XdmNode inputNode = null;
+	          for (XdmNode tempchild: sourceNode.children()){ //get correct node
+	         	if (tempchild != null){
+	              String tempName = tempchild.attribute("name");
+	              if (tempName != null){
+	                inputNode = tempchild;
+	              }
+	            }
+	          }
+	          if (inputNode != null){
+	            // print(inputNode.attribute("name"));
+	            // print(inputNode.toString());
+	          } else {
+	            throw new Exception("No name found. Property will be discarded.");
+	          }
+	          String propName = inputNode.attribute("name");
+	          
+	          Iterator i = inputNode.children().iterator();
+	          int c = 0; //number of children
+	          for (XdmNode x: inputNode.children()){c++;}
+	          // print(propName + " children: " + c); 
+	          if (c == 1) {
+	            for (XdmNode soleChild: inputNode.children()){
+	              props.put(propName,soleChild.toString()); //Add to Props
+	                print(propName + ": " + soleChild.toString());
+	            }
+	          }
+	        }
+	        catch (Exception e){
+	          print(e.getMessage());
+	        }
+	        finally{
+	            sourceNode = source.read();
+	        }
+	      }
+	      HashMap<String, String> results = new HashMap<String, String>();
+	      for (Map.Entry<String, String> entry: props.entrySet()){
+	        results.put(entry.getKey(), entry.getValue());
+	        SVNPropertyValue value = SVNPropertyValue.create(entry.getValue());
+	        propClient.doSetProperty(svnPath, entry.getKey(),value, false,SVNDepth.EMPTY,getCommitHandler(),null);
+	      }
+	      return results;
+	    }	
+	    catch (Exception e){
+	      print(e.getMessage());
+	      throw new SVNException(SVNErrorMessage.create(null,e.getMessage()));
+	    }
   }
   
   private HashMap<String, String> PropSet(SVNWCClient propClient, SVNURL url) throws SVNException{
@@ -75,7 +152,7 @@ public class XSvnPropGetSet extends DefaultStep {
         try {
           XdmNode inputNode = null;
           for (XdmNode tempchild: sourceNode.children()){ //get correct node
-            if (tempchild != null){
+         	if (tempchild != null){
               String tempName = tempchild.attribute("name");
               if (tempName != null){
                 inputNode = tempchild;
@@ -112,13 +189,13 @@ public class XSvnPropGetSet extends DefaultStep {
       for (Map.Entry<String, String> entry: props.entrySet()){
         results.put(entry.getKey(), entry.getValue());
         SVNPropertyValue value = SVNPropertyValue.create(entry.getValue());
-        propClient.doSetProperty(url, entry.getKey(),value, SVNRevision.HEAD,"Property " + entry.getKey() + " set to value " + entry.getValue(),null,false,null);
+        propClient.doSetProperty(url, entry.getKey(),value, SVNRevision.HEAD,"Property " + entry.getKey() + " set to value " + entry.getValue(),null,false,getCommitHandler());
       }
       return results;
     }	
     catch (Exception e){
       print(e.getMessage());
-      throw new SVNException(SVNErrorMessage.create(SVNErrorCode.MALFORMED_FILE,e.getMessage()));
+      throw new SVNException(SVNErrorMessage.create(null,e.getMessage()));
     }
   }
   
@@ -166,30 +243,55 @@ public class XSvnPropGetSet extends DefaultStep {
     XSvnXmlReport report = new XSvnXmlReport();
 	
     try{
+      print(username + "@" + url);
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
       SVNWCClient propClient = clientmngr.getWCClient();
-      SVNURL svnurl = SVNURL.parseURIEncoded( url );
-      
-      boolean allowUnversionedObstructions = false;
-      //revision
-      String revision = "";
-      if(revision.trim().isEmpty()){
-        svnRevision = svnPegRevision = SVNRevision.HEAD;
+      if (url.startsWith("http"))
+      {
+        SVNURL svnurl = SVNURL.parseURIEncoded( url );
+        
+        boolean allowUnversionedObstructions = false;
+        //revision
+        String revision = "";
+        if(revision.trim().isEmpty()){
+          svnRevision = svnPegRevision = SVNRevision.HEAD;
+        } else {
+          svnRevision = svnPegRevision = SVNRevision.parse(revision);
+        }
+        
+        HashMap<String, String> results = new HashMap<String, String>();
+        //PropGet or PropSet
+        if (aProperties.length == 0){ 
+          results = PropSet(propClient, svnurl);
+        } else {
+          results = PropGet(propClient, svnurl, aProperties);
+        }
+       
+        XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+        result.write(xmlResult);
       } else {
-        svnRevision = svnPegRevision = SVNRevision.parse(revision);
+    	  File svnPath = new File(url);
+    	  boolean allowUnversionedObstructions = false;
+          //revision
+          String revision = "";
+          if(revision.trim().isEmpty()){
+            svnRevision = svnPegRevision = SVNRevision.HEAD;
+          } else {
+            svnRevision = svnPegRevision = SVNRevision.parse(revision);
+          }
+          
+          HashMap<String, String> results = new HashMap<String, String>();
+          //PropGet or PropSet
+          if (aProperties.length == 0){ 
+            results = PropSet(propClient, svnPath);
+          } else {
+            results = PropGet(propClient, svnPath, aProperties);
+          }
+         
+          XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+          result.write(xmlResult);
       }
-      
-      HashMap<String, String> results = new HashMap<String, String>();
-      //PropGet or PropSet
-      if (aProperties.length == 0){ 
-        results = PropSet(propClient, svnurl);
-      } else {
-        results = PropGet(propClient, svnurl, aProperties);
-      }
-     
-      XdmNode xmlResult = report.createXmlResult(results, runtime, step);
-      result.write(xmlResult);
     }
     catch(SVNException svne) {
       System.out.println(svne.getMessage());
