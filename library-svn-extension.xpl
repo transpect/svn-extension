@@ -25,6 +25,7 @@
   <p:import href="svn-move-declaration.xpl"/>
   <p:import href="svn-unlock-declaration.xpl"/>
   <p:import href="svn-propget-declaration.xpl"/>
+  <p:import href="svn-propset-declaration.xpl"/>
   <p:import href="svn-update-declaration.xpl"/>
   
 </p:library>
