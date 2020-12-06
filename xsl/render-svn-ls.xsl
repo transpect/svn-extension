@@ -18,6 +18,8 @@
 
   <xsl:mode on-no-match="shallow-copy"/>
   
+  <xsl:output method="xhtml"/>
+  
   <xsl:template match="/lists">
     <html>
       <head>
@@ -32,9 +34,18 @@
           p.no-child.dir {
             margin-left: 2em;
           }
+          summary {
+            cursor: pointer;
+          }
+          body .list {
+            margin-top: 1em;
+            margin-left: -1em;
+          }
         </style>
       </head>
       <body>
+        <h1>Subversion Repository Listing</h1>
+        <p>Generated <xsl:sequence select="format-dateTime(current-dateTime(), '[Y0001]-[M01]-[D01] [H01]:[m01] [z]')"/></p>
         <xsl:variable name="prelim" as="document-node()">
           <xsl:document>
             <xsl:apply-templates/>
@@ -54,9 +65,11 @@
   <xsl:key name="by-parent_url" match="external" use="@parent_url"/>
   
   <xsl:template match="list" priority="1">
-    <xsl:next-match>
-      <xsl:with-param name="base-url" as="xs:string" select="@path" tunnel="yes"/>
-    </xsl:next-match>
+    <div class="list">
+      <xsl:next-match>
+        <xsl:with-param name="base-url" as="xs:string" select="@path" tunnel="yes"/>
+      </xsl:next-match>  
+    </div>
   </xsl:template>
   
   <xsl:template match="list" name="entries">
