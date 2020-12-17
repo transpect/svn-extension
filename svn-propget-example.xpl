@@ -6,10 +6,10 @@
   name="pipeline" 
   version="1.0">
 
-  <p:option name="username" select="''"/>
-  <p:option name="password" select="''"/>
-  <p:option name="repo" select="'https://subversion.le-tex.de/common/pdf2fxl'"/>
-  <p:option name="properties" select="'letex:compat svn:externals'"/>
+  <p:option name="username" select="'user'"/>
+  <p:option name="password" select="'pass'"/>
+  <p:option name="path" select="'repo-path'"/>
+  <p:option name="properties" select="'svn:externals'"/>
     
   <p:output port="result" sequence="true"/>
 
@@ -18,7 +18,7 @@
   <svn:propget name="svn-propget">
     <p:with-option name="username"   select="$username"/><!-- optional -->
     <p:with-option name="password"   select="$password"/><!-- optional -->
-    <p:with-option name="repo"       select="$repo"/>    <!-- required -->
+    <p:with-option name="path"       select="$path"/>    <!-- required -->
     <p:with-option name="properties" select="$properties"/><!-- whitespace-separated list -->
   </svn:propget>
 

@@ -225,7 +225,7 @@ public class XSvnPropGetSet extends DefaultStep {
     super.run();
     String username = getOption(new QName("username")).getString();
     String password = getOption(new QName("password")).getString();
-    String url = getOption(new QName("repo")).getString();
+    String url = getOption(new QName("path")).getString();
 	
 	  RuntimeValue temp;	  
 	  temp = getOption(new QName("properties"));
@@ -240,6 +240,8 @@ public class XSvnPropGetSet extends DefaultStep {
 	  if (sProperties != null) {
 	    aProperties = sProperties.split(" ");
 	  }
+	  for(String param : aProperties)
+      print("property-name: " + param);
     XSvnXmlReport report = new XSvnXmlReport();
 	
     try{

@@ -11,7 +11,7 @@
     <p:documentation>Provides the result.</p:documentation>
   </p:output>
 
-  <p:option name="repo">
+  <p:option name="path">
     <p:documentation>Path to a working copy or URL to a repository,
     applicable values are:
     https://subversion.le-tex.de/common/

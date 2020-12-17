@@ -250,3 +250,49 @@ Output
   <c:param name="revision" value="6634"/>
 </c:param-set>
 ```
+
+## svn:propset
+
+Set a property in the current working copy.
+```xml
+<svn:propset xmlns:svn="http://transpect.io/svn">
+  <p:input port="source">
+    <p:inline>
+      <svn:property name="letex:test">
+        addedViaSvnKit
+      </svn:property>
+    </p:inline>
+  </p:input>
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="path"     select="'../transpect'"/>
+</svn:checkout>
+```
+
+Output
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+  <c:param name="letex:test" value="addedViaSvnKit"/>
+</c:param-set>
+
+```
+
+## svn:propget
+
+Get the value of a property in the working copy or the remote repository
+```xml
+<svn:propsgt xmlns:svn="http://transpect.io/svn">
+  <p:with-option name="username" select="'user'"/>
+  <p:with-option name="password" select="'pass'"/>
+  <p:with-option name="path"     select="'../transpect'"/>
+</svn:checkout>
+```
+
+Output
+
+```xml
+<c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
+  <c:param name="letex:test" value="addedViaSvnKit"/>
+</c:param-set>
+```
