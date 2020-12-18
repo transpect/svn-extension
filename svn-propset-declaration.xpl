@@ -12,9 +12,8 @@
   </p:output>
 
   <p:option name="path">
-    <p:documentation>Path to a working copy or URL to a repository,
+    <p:documentation>Path to a working copy,
     applicable values are:
-    https://subversion.le-tex.de/common/
     C:/home/Martin/transpect
     ../transpect
     </p:documentation>
