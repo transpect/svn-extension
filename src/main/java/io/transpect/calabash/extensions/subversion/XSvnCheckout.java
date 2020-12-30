@@ -71,7 +71,7 @@ public class XSvnCheckout extends DefaultStep {
                                                       checkoutPath,
                                                       svnPegRevision,
                                                       svnRevision,
-                                                      SVNDepth.IMMEDIATES,
+                                                      SVNDepth.INFINITY,
                                                       allowUnversionedObstructions);
       HashMap<String, String> results = new HashMap<String, String>();
       results.put("repo", svnurl.toString());
