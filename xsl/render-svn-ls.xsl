@@ -81,6 +81,7 @@
         <details class="{@kind}">
         <summary>
           <a href="{$base-url}/{name}">
+            <xsl:apply-templates select="." mode="title-att"/>
             <xsl:value-of select="current-grouping-key()"/>
           </a>
         </summary>
@@ -127,6 +128,16 @@
         <xsl:with-param name="base-url" select="$external-base-url || '/' || @target" tunnel="yes"/>
       </xsl:call-template>
     </details>
+  </xsl:template>
+  
+  <xsl:template match="entry " mode="title-att">
+    <xsl:attribute name="title" separator=" ">
+      <xsl:apply-templates select="commit/(@revision, author, date), size" mode="#current"/>
+    </xsl:attribute>
+  </xsl:template>
+  
+  <xsl:template match="@revision | author | date | size" mode="title-att">
+    <xsl:sequence select="string-join((name(), string(.)), ':')"/>
   </xsl:template>
   
 </xsl:stylesheet>
