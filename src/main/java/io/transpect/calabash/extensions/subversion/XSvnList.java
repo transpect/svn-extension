@@ -9,14 +9,20 @@ import java.io.IOException;
 import net.sf.saxon.s9api.QName;
 import net.sf.saxon.s9api.SaxonApiException;
 import net.sf.saxon.s9api.XdmNode;
+import net.sf.saxon.om.AttributeMap;
+import net.sf.saxon.om.SingletonAttributeMap;
+import net.sf.saxon.om.AttributeInfo;
+import net.sf.saxon.om.EmptyAttributeMap;
 
 import com.xmlcalabash.core.XMLCalabash;
 import com.xmlcalabash.core.XProcRuntime;
+import com.xmlcalabash.core.XProcConstants;
 import com.xmlcalabash.io.WritablePipe;
 import com.xmlcalabash.library.DefaultStep;
 import com.xmlcalabash.model.RuntimeValue;
 import com.xmlcalabash.runtime.XAtomicStep;
 import com.xmlcalabash.util.TreeWriter;
+import com.xmlcalabash.util.TypeUtils;
 
 import org.tmatesoft.svn.core.SVNLock;
 import org.tmatesoft.svn.core.SVNNodeKind;
@@ -79,9 +85,9 @@ public class XSvnList extends DefaultStep {
   }
   public static XdmNode createXmlDirTree(File path, SVNWCClient client, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
     TreeWriter tree = new TreeWriter(runtime);
+    String baseURI = path.toURI().toString();
     tree.startDocument(step.getNode().getBaseURI());
-    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"));
-    tree.addAttribute(new QName("xml", "http://www.w3.org/XML/1998/namespace", "base"), path.toURI().toString());
+    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"), SingletonAttributeMap.of(TypeUtils.attributeInfo(XProcConstants.xml_base, baseURI)));
     listEntries(path, client, runtime, step, tree, recursive);
     tree.addEndElement();
     tree.endDocument();
@@ -92,14 +98,15 @@ public class XSvnList extends DefaultStep {
     if( path.isDirectory() && dirList != null ) {
       for (File child : dirList ) {
         String elementName = child.isDirectory() ? "directory" : "file";
-        tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName));
-        tree.addAttribute(new QName("name"), child.getName());
+        AttributeMap attr = EmptyAttributeMap.getInstance();
+        attr = attr.put(TypeUtils.attributeInfo(new QName("name"), child.getName()));
         if(!child.isDirectory()) {
-          tree.addAttribute(new QName("size"), String.valueOf(child.length() / 1024));
+          attr = attr.put(TypeUtils.attributeInfo(new QName("size"), String.valueOf(child.length() / 1024)));
         }
         if(child.isDirectory() && recursive) {
           listEntries(child, client, runtime, step, tree, recursive);
         }
+        tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName), attr);
         tree.addEndElement();
       }
     }
@@ -107,9 +114,9 @@ public class XSvnList extends DefaultStep {
   }
   public static XdmNode createXmlDirTree(SVNRepository repository, XProcRuntime runtime, XAtomicStep step, Boolean recursive) throws SVNException {
     TreeWriter tree = new TreeWriter(runtime);
+    String baseURI = repository.getLocation().toString();
     tree.startDocument(step.getNode().getBaseURI());
-    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"));
-    tree.addAttribute(new QName("xml", "http://www.w3.org/XML/1998/namespace", "base"), repository.getLocation().toString());
+    tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", "files"), SingletonAttributeMap.of(TypeUtils.attributeInfo(XProcConstants.xml_base, baseURI)));
     listEntries(repository, "", runtime, step, tree, recursive);
     tree.addEndElement();
     tree.endDocument();
@@ -124,30 +131,31 @@ public class XSvnList extends DefaultStep {
       String elementName = entry.getKind() == SVNNodeKind.DIR ? "directory" : "file";
       String entryURL = entry.getURL().toString();
       String entryRelPath = entryURL.replace(repositoryRootURL, "");
-      tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName));
-      tree.addAttribute(new QName("name"), entry.getName());
-      tree.addAttribute(new QName("author"), entry.getAuthor());
-      tree.addAttribute(new QName("date"), entry.getDate().toString());
-      tree.addAttribute(new QName("revision"), String.valueOf(entry.getRevision()));
+      AttributeMap attr = EmptyAttributeMap.getInstance();
+      attr = attr.put(TypeUtils.attributeInfo(new QName("name"), entry.getName()));
+      attr = attr.put(TypeUtils.attributeInfo(new QName("author"), entry.getAuthor()));
+      attr = attr.put(TypeUtils.attributeInfo(new QName("date"), entry.getDate().toString()));
+      attr = attr.put(TypeUtils.attributeInfo(new QName("revision"), String.valueOf(entry.getRevision())));      
       if( entry.getKind() == SVNNodeKind.FILE ){
         SVNLock lock = repository.getLock( entryRelPath );
-        tree.addAttribute(new QName("size"), String.valueOf(entry.getSize()));      
+        attr = attr.put(TypeUtils.attributeInfo(new QName("size"), String.valueOf(entry.getSize())));
         if( lock != null ) {
-          tree.addAttribute(new QName("lock-id"), lock.getID());
-          tree.addAttribute(new QName("lock-path"), lock.getPath());
-          tree.addAttribute(new QName("lock-owner"), lock.getOwner());
-          tree.addAttribute(new QName("lock-created"), lock.getCreationDate().toString());
+          attr = attr.put(TypeUtils.attributeInfo(new QName("lock-id"), lock.getID()));
+          attr = attr.put(TypeUtils.attributeInfo(new QName("lock-path"), lock.getPath()));
+          attr = attr.put(TypeUtils.attributeInfo(new QName("lock-owner"), lock.getOwner()));
+          attr = attr.put(TypeUtils.attributeInfo(new QName("lock-created"), lock.getCreationDate().toString()));
           if( lock.getExpirationDate() != null ) {
-            tree.addAttribute(new QName("lock-expires"), lock.getExpirationDate().toString());
+            attr = attr.put(TypeUtils.attributeInfo(new QName("lock-expires"), lock.getExpirationDate().toString()));
           }
           if( lock.getComment() != null ) {
-            tree.addAttribute(new QName("lock-comment"), lock.getComment());
+            attr = attr.put(TypeUtils.attributeInfo(new QName("lock-comment"), lock.getComment()));
           }
         }
       }
       if ( entry.getKind() == SVNNodeKind.DIR && recursive == true ) {
         listEntries(repository, (path.equals( "" )) ? entry.getName( ) : path + "/" + entry.getName( ), runtime, step, tree, recursive);
       }
+      tree.addStartElement(new QName("c", "http://www.w3.org/ns/xproc-step", elementName), attr);
       tree.addEndElement();
     }
     return tree;
