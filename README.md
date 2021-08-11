@@ -282,11 +282,11 @@ Output
 
 Get the value of a property in the working copy or the remote repository
 ```xml
-<svn:propsgt xmlns:svn="http://transpect.io/svn">
+<svn:propget xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
   <p:with-option name="path"     select="'../transpect'"/>
-</svn:checkout>
+</svn:propget>
 ```
 
 Output
