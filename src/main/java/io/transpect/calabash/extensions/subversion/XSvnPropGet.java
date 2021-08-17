@@ -63,13 +63,20 @@ public class XSvnPropGet extends DefaultStep {
       } else {
         propData = client.doGetProperty(new File(repo), property, svnPegRevision, svnRevision);
       }
-      HashMap<String, String> results = new HashMap<String, String>();
-      results.put("property", propData.getName());
-      results.put("value", propData.getValue().toString());
-      results.put("repo", repo);
-      results.put("revision", svnRevision.toString());
-      XdmNode xmlResult = report.createXmlResult(results, runtime, step);
-      result.write(xmlResult);
+      if(propData != null){
+        HashMap<String, String> results = new HashMap<String, String>();
+        results.put("property", propData.getName());
+        results.put("value", propData.getValue().toString());
+        results.put("repo", repo);
+        results.put("revision", svnRevision.toString());
+        XdmNode xmlResult = report.createXmlResult(results, runtime, step);
+        result.write(xmlResult);
+      } else {
+        String msg = "SVN property cannot be found at this node!";
+        System.out.println("[ERROR] " + msg);
+      XdmNode xmlError = report.createXmlError(msg, runtime, step);
+      result.write(xmlError);
+      }
     } catch(SVNException svne) {
       System.out.println(svne.getMessage());
       XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
