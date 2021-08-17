@@ -74,8 +74,8 @@ public class XSvnPropGet extends DefaultStep {
       } else {
         String msg = "SVN property cannot be found at this node!";
         System.out.println("[ERROR] " + msg);
-      XdmNode xmlError = report.createXmlError(msg, runtime, step);
-      result.write(xmlError);
+        XdmNode xmlError = report.createXmlError(msg, runtime, step);
+        result.write(xmlError);
       }
     } catch(SVNException svne) {
       System.out.println(svne.getMessage());
