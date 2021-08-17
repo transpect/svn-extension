@@ -285,7 +285,9 @@ Get the value of a property in the working copy or the remote repository
 <svn:propget xmlns:svn="http://transpect.io/svn">
   <p:with-option name="username" select="'user'"/>
   <p:with-option name="password" select="'pass'"/>
-  <p:with-option name="path"     select="'../transpect'"/>
+  <p:with-option name="repo"     select="'../transpect'"/>
+  <p:with-option name="property" select="'svn:externals'"/>
+  <p:with-option name="revision" select="'HEAD'"/>
 </svn:propget>
 ```
 
@@ -293,6 +295,9 @@ Output
 
 ```xml
 <c:param-set xmlns:c="http://www.w3.org/ns/xproc-step">
-  <c:param name="letex:test" value="addedViaSvnKit"/>
+  <c:param name="repo" value="C:/cygwin64/home/Martin/transpect/trunk"/>
+  <c:param name="property" value="svn:externals"/>
+  <c:param name="value"    value="cascade -r 82 https://github.com/transpect/cascade/trunk&#xD;&#xA;fontmaps -r 21 https://github.com/transpect/fontmaps/trunk&#xD;&#xA;cascade"/>
+  <c:param name="revision" value="HEAD"/>
 </c:param-set>
 ```
