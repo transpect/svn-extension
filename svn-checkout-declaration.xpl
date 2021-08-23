@@ -23,6 +23,12 @@
   <p:option name="path">
     <p:documentation>Path where the SVN working copy is checked out.</p:documentation>
   </p:option>
+  <p:option name="depth">
+    <p:documentation>
+      SVN Depth. Permitted values are: 'empty', 'exclude', 'files',
+      'immediates', 'infinity', 'unknown'. Default is 'infinity'.
+    </p:documentation>
+  </p:option>
 
   
 </p:declare-step>
