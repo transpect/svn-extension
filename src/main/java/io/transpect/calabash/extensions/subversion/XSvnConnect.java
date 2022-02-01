@@ -31,10 +31,10 @@ import org.tmatesoft.svn.core.auth.BasicAuthenticationManager;
  * Subversion repository. You need to instantiate the class with the 
  * corresponding Subversion URL, username and password.
  */
-enum AuthType{PASSWORD, PRIVKEY};
 
 public class XSvnConnect {
 
+	private enum AuthType{PASSWORD, PRIVKEY};
 	private AuthType authType;
 	
   private String url;
