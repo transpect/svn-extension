@@ -35,6 +35,7 @@ import org.tmatesoft.svn.core.wc.SVNPropertyData;
 import org.tmatesoft.svn.core.wc.ISVNPropertyHandler;
 import org.tmatesoft.svn.core.SVNPropertyValue;
 import org.tmatesoft.svn.core.SVNDepth;
+import org.tmatesoft.svn.core.SVNCommitInfo;
 
 import io.transpect.calabash.extensions.subversion.XSvnConnect;
 import io.transpect.calabash.extensions.subversion.XSvnXmlReport;
@@ -84,7 +85,7 @@ public class XSvnPropGetSet extends DefaultStep {
   }
   
   private HashMap<String, String> PropSet(SVNWCClient propClient, File svnPath) throws SVNException{
-	  print("PropSet");
+	  print("Local PropSet");
 	    try {
 	      HashMap<String, String> props = new HashMap<String, String>();
 	      XdmNode sourceNode = null;
@@ -142,7 +143,7 @@ public class XSvnPropGetSet extends DefaultStep {
   }
   
   private HashMap<String, String> PropSet(SVNWCClient propClient, SVNURL url) throws SVNException{
-    print("PropSet");
+    print("Remote PropSet");
     try {
       HashMap<String, String> props = new HashMap<String, String>();
       XdmNode sourceNode = null;
@@ -189,7 +190,8 @@ public class XSvnPropGetSet extends DefaultStep {
       for (Map.Entry<String, String> entry: props.entrySet()){
         results.put(entry.getKey(), entry.getValue());
         SVNPropertyValue value = SVNPropertyValue.create(entry.getValue());
-        propClient.doSetProperty(url, entry.getKey(),value, SVNRevision.HEAD,"Property " + entry.getKey() + " set to value " + entry.getValue(),null,false,getCommitHandler());
+        SVNCommitInfo ci = propClient.doSetProperty(url, entry.getKey(),value, SVNRevision.HEAD,"Property " + entry.getKey() + " set to value " + entry.getValue(),null,false,getCommitHandler());
+        print(ci.toString());
       }
       return results;
     }	
@@ -245,10 +247,10 @@ public class XSvnPropGetSet extends DefaultStep {
     XSvnXmlReport report = new XSvnXmlReport();
 	
     try{
-      print(username + "@" + url);
       XSvnConnect connection = new XSvnConnect(url, username, password);
       SVNClientManager clientmngr = connection.getClientManager();
       SVNWCClient propClient = clientmngr.getWCClient();
+			print(url);
       if (url.startsWith("http"))
       {
         SVNURL svnurl = SVNURL.parseURIEncoded( url );

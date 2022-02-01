@@ -6,7 +6,7 @@
   name="pipeline" 
   version="1.0">
 
-  <p:option name="username" select="'user'"/>
+  <p:option name="username" select="'user or path'"/>
   <p:option name="password" select="'pass'"/>
   <p:option name="path" select="'repo-path'"/>
   <p:option name="properties" select="'svn:externals'"/>
