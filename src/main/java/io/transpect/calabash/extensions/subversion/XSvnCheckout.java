@@ -52,6 +52,7 @@ public class XSvnCheckout extends DefaultStep {
     String url = getOption(new QName("repo")).getString();
     String path = getOption(new QName("path")).getString();
     String revision = getOption(new QName("revision")).getString();
+    String depth = getOption(new QName("depth")).getString();
     XSvnXmlReport report = new XSvnXmlReport();
     try{
       XSvnConnect connection = new XSvnConnect(path, username, password);
@@ -71,7 +72,7 @@ public class XSvnCheckout extends DefaultStep {
                                                       checkoutPath,
                                                       svnPegRevision,
                                                       svnRevision,
-                                                      SVNDepth.INFINITY,
+                                                      getSVNDepth(depth),
                                                       allowUnversionedObstructions);
       HashMap<String, String> results = new HashMap<String, String>();
       results.put("repo", svnurl.toString());
@@ -84,5 +85,21 @@ public class XSvnCheckout extends DefaultStep {
       XdmNode xmlError = report.createXmlError(svne.getMessage(), runtime, step);
       result.write(xmlError);
     }
+  }
+  private SVNDepth getSVNDepth(String depth) {
+    switch (depth) {
+    case "empty":
+      return SVNDepth.EMPTY;
+    case "exclude":
+      return SVNDepth.EXCLUDE;
+    case "files":
+      return SVNDepth.FILES;
+    case "immediates":
+      return SVNDepth.IMMEDIATES;
+    case "unknown":
+      return SVNDepth.UNKNOWN;
+    default:
+      return SVNDepth.INFINITY;
+    }    
   }
 }

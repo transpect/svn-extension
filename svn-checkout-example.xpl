@@ -11,6 +11,7 @@
   <p:option name="repo"     select="'https://subversion.le-tex.de/common/myrepo'"/>
   <p:option name="path"     select="'checkout-path'"/>
   <p:option name="revision" select="'HEAD'"/>
+  <p:option name="depth"    select="'infinity'"/>
   
   <p:serialization port="result" indent="true"/>
 
@@ -24,6 +25,7 @@
     <p:with-option name="repo"     select="$repo"/>
     <p:with-option name="path"     select="$path"/>
     <p:with-option name="revision" select="$revision"/>
+    <p:with-option name="depth"    select="$depth"/>
   </svn:checkout>
 
 </p:declare-step>
